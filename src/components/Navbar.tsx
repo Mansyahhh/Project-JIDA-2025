@@ -11,7 +11,10 @@ export default function Navbar() {
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-md fixed top-0 left-0 w-full z-50">
       <div className="text-2xl font-bold text-blue-700">
-        Sekolah<span className="text-green-600">Ku</span>
+        <Link href="/" className="hover:text-blue-600">
+          Sekolah
+        </Link>
+        <span className="text-green-600">Ku</span>
       </div>
 
       <div className="flex gap-6 items-center text-sm font-medium text-gray-700">
