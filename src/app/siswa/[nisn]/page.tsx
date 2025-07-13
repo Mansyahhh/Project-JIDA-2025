@@ -1,3 +1,5 @@
+// src/app/siswa/[nisn]/page.tsx
+
 import { notFound } from "next/navigation";
 import { pesertaDidik } from "@/data/pesertaDidik";
 
@@ -5,6 +7,12 @@ interface PageProps {
   params: {
     nisn: string;
   };
+}
+
+export async function generateStaticParams() {
+  return pesertaDidik.map((siswa) => ({
+    nisn: siswa.nisn,
+  }));
 }
 
 export default function DetailSiswa({ params }: PageProps) {
