@@ -8,16 +8,17 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Untuk debugging (opsional, bisa hapus di production)
-  console.log("🚦 PATHNAME:", pathname);
-
   const hideNavbar =
     pathname.startsWith("/login") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/siswa");
 
   useEffect(() => {
-    // Cegah error localStorage di server
+    const halamanPrivat =
+      pathname.startsWith("/admin") || pathname.startsWith("/siswa");
+
+    if (!halamanPrivat) return;
+
     if (typeof window === "undefined") return;
 
     const userStr = localStorage.getItem("user");
@@ -34,7 +35,11 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
     ) {
       router.push("/login");
     }
-  }, [pathname, router]); // ✅ tambahkan router ke dependencies
+
+    if (pathname.startsWith("/admin") && user.role !== "admin") {
+      router.push("/login");
+    }
+  }, [pathname, router]);
 
   return (
     <>
