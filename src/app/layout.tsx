@@ -1,8 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import Wrapper from "@/lib/Wrapper";
 
@@ -17,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="id" className={inter.className}>
-      <body className="bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen scroll-smooth overflow-x-hidden">
+      <body className="bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen scroll-smooth">
         <Wrapper>{children}</Wrapper>
       </body>
     </html>

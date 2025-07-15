@@ -1,3 +1,15 @@
+export type Siswa = {
+  nisn: string;
+  nama: string;
+  kelas: string;
+  status: string;
+  pembayaran: {
+    spp: boolean;
+    buku: boolean;
+    seragam: boolean;
+  };
+};
+
 export const pesertaDidik = [
   {
     nisn: "1234567890",

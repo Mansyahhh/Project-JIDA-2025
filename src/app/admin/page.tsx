@@ -23,9 +23,8 @@ export default function AdminDashboard() {
     if (user.role !== "admin") {
       router.push("/login");
     }
-  }, []);
+  }, [router]);
 
-  const total = pesertaDidik.length;
   const totalSiswa = pesertaDidik.filter(
     (s) => s.status === "aktif" || s.status === "mutasi-masuk"
   ).length;
