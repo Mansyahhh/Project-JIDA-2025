@@ -1,9 +1,10 @@
-// app/layout.tsx
-
 import "./globals.css";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
+import { usePathname } from "next/navigation";
+import { ReactNode } from "react";
+import Wrapper from "@/lib/Wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,21 +13,12 @@ export const metadata: Metadata = {
   description: "Aplikasi manajemen sekolah berbasis Next.js",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// 👇 Buat wrapper client component
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={inter.className}>
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
-      <body className="bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen flex flex-col scroll-smooth">
-        <Navbar />
-        <main className="flex-grow flex flex-col items-center justify-center p-6">
-          {children}
-        </main>
+    <html lang="id" className={inter.className}>
+      <body className="bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen scroll-smooth overflow-x-hidden">
+        <Wrapper>{children}</Wrapper>
       </body>
     </html>
   );

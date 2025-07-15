@@ -1,4 +1,6 @@
 "use client";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -13,25 +15,27 @@ export default function Hero() {
           dan guru.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <a
-            href="/login/admin"
+          <Link
+            href="/login"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow"
           >
             Masuk Admin
-          </a>
-          <a
-            href="/login/siswa"
+          </Link>
+          <Link
+            href="/login"
             className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded"
           >
             Masuk Siswa
-          </a>
+          </Link>
         </div>
       </div>
 
       {/* Ilustrasi */}
       <div className="md:w-1/2">
-        <img
+        <Image
           src="/studying.svg"
+          width={200}
+          height={200}
           alt="Ilustrasi belajar"
           className="w-full max-w-md mx-auto"
         />

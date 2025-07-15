@@ -18,7 +18,7 @@ export default function Navbar() {
       </div>
 
       <div className="flex gap-6 items-center text-sm font-medium text-gray-700">
-        <Link href="#galeri" className="hover:text-blue-600">
+        <Link href="/#galeri" className="hover:text-blue-600">
           Galeri
         </Link>
         <Link href="/tentang" className="hover:text-blue-600">
@@ -52,14 +52,14 @@ export default function Navbar() {
                 className="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-10"
               >
                 <Link
-                  href="/login/admin"
+                  href="/login"
                   className="block px-4 py-2 hover:bg-blue-50"
                   onClick={() => setIsOpen(false)}
                 >
                   Login Admin
                 </Link>
                 <Link
-                  href="/login/siswa"
+                  href="/login"
                   className="block px-4 py-2 hover:bg-blue-50"
                   onClick={() => setIsOpen(false)}
                 >

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 export default function Galeri() {
   return (
@@ -11,10 +12,12 @@ export default function Galeri() {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <img
+          <Image
             key={i}
             src={`/galeri/${i}.svg`}
             alt={`Galeri ${i}`}
+            width={150}
+            height={150}
             className="w-full h-48 object-contain p-4 rounded-lg shadow-md bg-white"
           />
         ))}
