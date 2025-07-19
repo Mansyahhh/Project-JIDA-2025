@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Siswa" ALTER COLUMN "nik" DROP NOT NULL,
+ALTER COLUMN "tempatLahir" DROP NOT NULL;

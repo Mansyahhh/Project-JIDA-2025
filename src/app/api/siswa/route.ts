@@ -1,55 +1,40 @@
-// src/app/api/siswa/route.ts
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import type { SiswaFormValues } from "@/types/siswa";
 
-import { NextRequest, NextResponse } from "next/server";
+export async function POST(req: Request) {
+  try {
+    const body: SiswaFormValues = await req.json();
 
-let siswaList = [
-  { id: "001", nama: "Andi", kelas: "7A" },
-  { id: "002", nama: "Budi", kelas: "8B" },
-  { id: "003", nama: "Citra", kelas: "9C" },
-];
+    const { tanggalLahir, ...rest } = body;
 
-// GET: ambil semua siswa
-export function GET() {
-  return NextResponse.json(siswaList);
-}
+    const siswa = await prisma.siswa.create({
+      data: {
+        ...rest,
+        password: "siswa123", // default
+        ...(tanggalLahir ? { tanggalLahir: new Date(tanggalLahir) } : {}),
+      },
+    });
 
-// POST: tambah siswa baru
-export async function POST(req: NextRequest) {
-  const data = await req.json();
-
-  const newSiswa = {
-    id: Date.now().toString(), // ID otomatis
-    nama: data.nama,
-    kelas: data.kelas,
-  };
-
-  siswaList.push(newSiswa);
-  return NextResponse.json({ status: "ok", data: newSiswa });
-}
-
-// DELETE: hapus siswa berdasarkan ID
-export async function DELETE(req: NextRequest) {
-  const { id } = await req.json();
-
-  const index = siswaList.findIndex((s) => s.id === id);
-  if (index !== -1) {
-    siswaList.splice(index, 1);
-    return NextResponse.json({ status: "deleted", id });
+    return NextResponse.json(siswa, { status: 201 });
+  } catch (error) {
+    console.error("[SISWA POST]", error);
+    return NextResponse.json(
+      { message: "Terjadi kesalahan saat menambahkan siswa." },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({ status: "not_found" }, { status: 404 });
 }
 
-// PATCH: update siswa berdasarkan ID
-export async function PATCH(req: NextRequest) {
-  const { id, nama, kelas } = await req.json();
-
-  const index = siswaList.findIndex((s) => s.id === id);
-  if (index === -1) {
-    return NextResponse.json({ status: "not_found" }, { status: 404 });
+// GET
+export async function GET() {
+  try {
+    const siswa = await prisma.siswa.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return NextResponse.json(siswa);
+  } catch (error) {
+    console.error("Gagal ambil data siswa", error);
+    return NextResponse.json({ error: "Gagal ambil data" }, { status: 500 });
   }
-
-  siswaList[index] = { ...siswaList[index], nama, kelas };
-
-  return NextResponse.json({ status: "updated", data: siswaList[index] });
 }
