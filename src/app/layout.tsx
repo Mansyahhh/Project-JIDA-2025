@@ -5,7 +5,6 @@ import { ReactNode } from "react";
 import Wrapper from "@/lib/Wrapper";
 import { Toaster } from "sonner";
 import ReduxProvider from "@/components/providers/ReduxProvider";
-import { store } from "@/store";
 
 const inter = Inter({ subsets: ["latin"] });
 

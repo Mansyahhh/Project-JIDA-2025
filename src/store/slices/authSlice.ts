@@ -1,22 +1,17 @@
-// src/store/slices/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface User {
-  id: string;
-  nama: string;
-  role: "admin" | "superadmin" | "siswa"; // role bisa disesuaikan
-}
+export type UserRole = "admin" | "superadmin" | "siswa";
 
 interface AuthState {
   isLoggedIn: boolean;
-  user: User | null;
+  role: UserRole | null;
+  token: string | null;
 }
 
 const initialState: AuthState = {
   isLoggedIn: false,
-  id: "",
-  nama: "",
-  role: "siswa", // default kalau belum login
+  role: null,
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -25,18 +20,16 @@ const authSlice = createSlice({
   reducers: {
     login: (
       state,
-      action: PayloadAction<{ id: string; nama: string; role: UserRole }>
+      action: PayloadAction<{ role: UserRole; token: string }>
     ) => {
       state.isLoggedIn = true;
-      state.id = action.payload.id;
-      state.nama = action.payload.nama;
       state.role = action.payload.role;
+      state.token = action.payload.token;
     },
     logout: (state) => {
       state.isLoggedIn = false;
-      state.id = "";
-      state.nama = "";
-      state.role = "siswa";
+      state.role = null;
+      state.token = null;
     },
   },
 });

@@ -1,22 +1,30 @@
-"use client";
+// components/admin/DashboardHeader.tsx
 
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+interface DashboardHeaderProps {
+  jumlahSiswa: number;
+  jumlahGuru: number;
+  totalPembayaran: number;
+}
 
-export default function DashboardHeader() {
-  const { nama, role, isLoggedIn } = useSelector(
-    (state: RootState) => state.auth
-  );
-
+export default function DashboardHeader({
+  jumlahSiswa,
+  jumlahGuru,
+  totalPembayaran,
+}: DashboardHeaderProps) {
   return (
-    <div>
-      {isLoggedIn ? (
-        <h2 className="text-xl font-semibold">
-          Selamat datang, {nama} ({role})
-        </h2>
-      ) : (
-        <h2 className="text-xl font-semibold">Selamat datang 👋</h2>
-      )}
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-lg font-semibold">Jumlah Siswa</h2>
+        <p className="text-2xl">{jumlahSiswa}</p>
+      </div>
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-lg font-semibold">Jumlah Guru</h2>
+        <p className="text-2xl">{jumlahGuru}</p>
+      </div>
+      <div className="bg-white p-4 rounded shadow">
+        <h2 className="text-lg font-semibold">Total Pembayaran</h2>
+        <p className="text-2xl">Rp {totalPembayaran.toLocaleString()}</p>
+      </div>
     </div>
   );
 }

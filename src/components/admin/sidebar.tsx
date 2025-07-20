@@ -13,7 +13,11 @@ import {
 const menu = [
   { href: "/admin", label: "Beranda", icon: <FaHome /> },
   { href: "/admin/data-siswa", label: "Data Siswa", icon: <FaUsers /> },
-  { href: "/admin/guru", label: "Data Guru", icon: <FaChalkboardTeacher /> },
+  {
+    href: "/admin/data-guru",
+    label: "Data Guru",
+    icon: <FaChalkboardTeacher />,
+  },
   { href: "/admin/pembayaran", label: "Pembayaran", icon: <FaMoneyBill /> },
 ];
 

@@ -7,11 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum StatusSiswa {
+  Aktif
+  MutasiMasuk
+  MutasiKeluar
+  Lulus
+}
+
 model Siswa {
   id              String    @id @default(uuid())
   nama            String
   kelas           String
-  nisn            String
+  nisn            String    @unique
   password        String
   alamat          String?
   createdAt       DateTime  @default(now())
@@ -26,4 +33,29 @@ model Siswa {
   tanggalLahir    DateTime?
   tempatLahir     String?
   jenisKelamin    String?
+
+  pembayaran Pembayaran[]
+}
+
+model Guru {
+  id          String   @id @default(uuid())
+  nama        String
+  jenisKelamin String
+  alamat       String?
+  email       String   @unique
+  phone       String?
+  tipePegawai String // "Pendidik" | "Kependidikan"
+  mapel       String? // misalnya: Matematika, IPA, dll
+  pendidikanTerakhir String
+  createdAt   DateTime @default(now())
+}
+
+model Pembayaran {
+  id         String   @id @default(uuid())
+  siswaId    String
+  jumlah     Int
+  keterangan String?
+  tanggal    DateTime @default(now())
+
+  siswa Siswa @relation(fields: [siswaId], references: [id])
 }

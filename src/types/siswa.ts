@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { STATUS_OPTIONS, StatusSiswa } from "./status";
 
 export const SiswaFormSchema = z.object({
   id: z.string().optional(),
@@ -31,6 +32,7 @@ export const SiswaFormSchema = z.object({
     .string()
     .regex(/^\d+$/, "Penghasilan harus berupa angka")
     .optional(),
+  status: z.enum(STATUS_OPTIONS.map((s) => s.value) as [string, ...string[]]),
 });
 
 export type SiswaFormValues = z.infer<typeof SiswaFormSchema>;

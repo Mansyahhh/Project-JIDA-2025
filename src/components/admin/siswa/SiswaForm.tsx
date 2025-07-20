@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SiswaFormSchema, SiswaFormValues } from "@/types/siswa";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,15 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
+import { STATUS_OPTIONS } from "@/types/status";
 
 interface SiswaFormProps {
   defaultValues?: SiswaFormValues;
@@ -25,6 +34,7 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
     register,
     handleSubmit,
     formState: { errors },
+    control, // ← ini yang dibutuhkan oleh <Controller>
   } = useForm<SiswaFormValues>({
     resolver: zodResolver(SiswaFormSchema),
     defaultValues,
@@ -199,6 +209,26 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
               </p>
             )}
           </div>
+
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih status siswa" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+
           <div className="md:col-span-2 mt-6 flex justify-end">
             <Button
               type="submit"
