@@ -1,27 +1,27 @@
-export const dynamic = "force-dynamic"; // ⬅️ Tambahkan baris ini
+"use client";
 
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { SiswaForm } from "@/components/admin/siswa/SiswaForm";
 import { SiswaFormValues } from "@/types/siswa";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+export default function EditSiswaPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [siswa, setSiswa] = useState<SiswaFormValues | null>(null);
 
-export default async function EditSiswaPage(props: PageProps) {
-  const { id } = (await props.params);
+  useEffect(() => {
+    const fetchSiswa = async () => {
+      const res = await fetch(`/api/siswa/${params.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setSiswa(data);
+    };
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/siswa/${id}`,
-    {
-      cache: "no-store",
-    }
-  );
+    fetchSiswa();
+  }, [params.id]);
 
-  if (!res.ok) {
-    return <div className="p-4 text-red-500">Data tidak ditemukan</div>;
-  }
+  if (!siswa) return <div>Loading...</div>;
 
-  const dataSiswa: SiswaFormValues = await res.json();
-
-  return <SiswaForm defaultValues={dataSiswa} mode="edit" />;
+  return <SiswaForm defaultValues={siswa} mode="edit" />;
 }

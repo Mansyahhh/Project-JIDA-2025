@@ -1,13 +1,15 @@
+"use client";
+
 import {
   AlertDialog,
   AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -17,14 +19,18 @@ export function DeleteSiswaButton({ id }: { id: string }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    const res = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
-    const result = await res.json();
-    console.log("Hapus response:", result);
-    if (res.ok) {
-      toast.success("Siswa berhasil dihapus");
-      router.refresh();
-    } else {
-      toast.error("Gagal menghapus data");
+    try {
+      const res = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Gagal menghapus siswa");
+
+      toast.success("✅ Siswa berhasil dihapus");
+
+      // Refresh seluruh halaman
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
+    } catch {
+      toast.error("❌ Terjadi kesalahan saat menghapus");
     }
   };
 
@@ -37,10 +43,9 @@ export function DeleteSiswaButton({ id }: { id: string }) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
+          <AlertDialogTitle>Yakin ingin menghapus siswa ini?</AlertDialogTitle>
           <AlertDialogDescription>
-            Tindakan ini tidak dapat dibatalkan. Data siswa akan dihapus secara
-            permanen.
+            Data akan dihapus secara permanen dan tidak dapat dikembalikan.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

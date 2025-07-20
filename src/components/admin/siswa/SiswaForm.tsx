@@ -110,13 +110,14 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
             <RadioGroup
               id="jenisKelamin"
               defaultValue={defaultValues?.jenisKelamin || ""}
-              className="flex gap-4"
+              className="flex gap-4 p-2 bg-gray-50 rounded-md"
             >
               <div>
                 <RadioGroupItem
                   value="Laki-laki"
                   {...register("jenisKelamin")}
                   id="laki"
+                  className="border border-gray-400 text-gray-900"
                 />
                 <Label htmlFor="laki">Laki-laki</Label>
               </div>
@@ -125,6 +126,7 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
                   value="Perempuan"
                   {...register("jenisKelamin")}
                   id="perempuan"
+                  className="border border-gray-400 text-gray-900"
                 />
                 <Label htmlFor="perempuan">Perempuan</Label>
               </div>
