@@ -54,6 +54,7 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
       router.push("/admin/data-siswa");
       router.refresh();
     } catch (err) {
+      console.error(err); // atau gunakan "_" untuk menandakan tidak digunakan
       toast.error("Terjadi kesalahan saat menyimpan data");
     } finally {
       setLoading(false);

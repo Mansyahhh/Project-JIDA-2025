@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { DeleteSiswaButton } from "@/components/DeleteSiswaButton";
 
 interface Siswa {
@@ -20,7 +19,6 @@ interface Siswa {
 export default function DataSiswaPage() {
   const [data, setData] = useState<Siswa[]>([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {

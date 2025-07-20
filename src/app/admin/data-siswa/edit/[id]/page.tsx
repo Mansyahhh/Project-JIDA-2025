@@ -4,11 +4,11 @@ import { SiswaForm } from "@/components/admin/siswa/SiswaForm";
 import { SiswaFormValues } from "@/types/siswa";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditSiswaPage(props: PageProps) {
-  const { id } = props.params;
+  const { id } = (await props.params);
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/siswa/${id}`,

@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { SiswaFormSchema } from "@/types/siswa";
 
-// GET: Ambil data siswa berdasarkan ID
+// GET
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // ✅ wajib pakai Promise
 ) {
+  const { id } = await context.params;
+
   try {
-    const siswa = await prisma.siswa.findUnique({
-      where: { id: params.id },
-    });
+    const siswa = await prisma.siswa.findUnique({ where: { id } });
 
     if (!siswa) {
       return NextResponse.json(
@@ -21,7 +21,7 @@ export async function GET(
 
     return NextResponse.json(siswa);
   } catch (error) {
-    console.error("[GET_SISWA_BY_ID_ERROR]", error);
+    console.error("[GET_SISWA_ERROR]", error);
     return NextResponse.json(
       { error: "Gagal mengambil data siswa" },
       { status: 500 }
@@ -29,11 +29,13 @@ export async function GET(
   }
 }
 
-// PATCH: Update data siswa
+// PATCH
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
+
   try {
     const body = await req.json();
     const parsed = SiswaFormSchema.safeParse(body);
@@ -45,12 +47,12 @@ export async function PATCH(
       );
     }
 
-    const siswa = await prisma.siswa.update({
-      where: { id: params.id },
+    const updated = await prisma.siswa.update({
+      where: { id },
       data: parsed.data,
     });
 
-    return NextResponse.json(siswa);
+    return NextResponse.json(updated);
   } catch (error) {
     console.error("[PATCH_SISWA_ERROR]", error);
     return NextResponse.json(
@@ -60,13 +62,12 @@ export async function PATCH(
   }
 }
 
-// 👇 fix utama ada di parameter ini
+// DELETE
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { params } = await context;
-  const id = params.id;
+  const { id } = await context.params;
 
   if (!id) {
     return NextResponse.json(
