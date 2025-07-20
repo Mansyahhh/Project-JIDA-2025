@@ -7,6 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -17,6 +18,8 @@ export function DeleteSiswaButton({ id }: { id: string }) {
 
   const handleDelete = async () => {
     const res = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
+    const result = await res.json();
+    console.log("Hapus response:", result);
     if (res.ok) {
       toast.success("Siswa berhasil dihapus");
       router.refresh();
@@ -35,6 +38,10 @@ export function DeleteSiswaButton({ id }: { id: string }) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Yakin ingin menghapus?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Tindakan ini tidak dapat dibatalkan. Data siswa akan dihapus secara
+            permanen.
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Batal</AlertDialogCancel>

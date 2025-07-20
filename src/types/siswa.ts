@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const SiswaFormSchema = z.object({
+  id: z.string().optional(),
   nisn: z
     .string()
     .length(10, "NISN harus terdiri dari 10 digit angka")

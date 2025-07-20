@@ -35,7 +35,7 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
 
     try {
       const res = await fetch(
-        mode === "edit" ? `/api/siswa/${defaultValues?.nisn}` : "/api/siswa",
+        mode === "edit" ? `/api/siswa/${defaultValues?.id}` : "/api/siswa",
         {
           method: mode === "edit" ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -196,20 +196,20 @@ export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
               </p>
             )}
           </div>
+          <div className="md:col-span-2 mt-6 flex justify-end">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="cursor-pointer w-full sm:w-auto"
+            >
+              {loading
+                ? "Menyimpan..."
+                : mode === "edit"
+                ? "Simpan Perubahan"
+                : "Tambah Siswa"}
+            </Button>
+          </div>
         </form>
-        <div className="mt-6 flex justify-end">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="cursor-pointer w-full"
-          >
-            {loading
-              ? "Menyimpan..."
-              : mode === "edit"
-              ? "Simpan Perubahan"
-              : "Tambah Siswa"}
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
