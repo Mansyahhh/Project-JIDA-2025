@@ -1,3 +1,4 @@
+// components/DeleteSiswaButton.tsx
 "use client";
 
 import {
@@ -11,26 +12,24 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
-export function DeleteSiswaButton({ id }: { id: string }) {
-  const router = useRouter();
+interface Props {
+  id: string;
+  onSuccess: () => void;
+}
 
+export function DeleteSiswaButton({ id, onSuccess }: Props) {
   const handleDelete = async () => {
     try {
       const res = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Gagal menghapus siswa");
+      if (!res.ok) throw new Error();
 
       toast.success("✅ Siswa berhasil dihapus");
-
-      // Refresh seluruh halaman
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
+      onSuccess();
     } catch {
-      toast.error("❌ Terjadi kesalahan saat menghapus");
+      toast.error("❌ Gagal menghapus siswa");
     }
   };
 
@@ -43,9 +42,9 @@ export function DeleteSiswaButton({ id }: { id: string }) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Yakin ingin menghapus siswa ini?</AlertDialogTitle>
+          <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
           <AlertDialogDescription>
-            Data akan dihapus secara permanen dan tidak dapat dikembalikan.
+            Data siswa akan dihapus secara permanen.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

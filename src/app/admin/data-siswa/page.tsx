@@ -1,3 +1,4 @@
+// app/admin/data-siswa/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,18 +22,16 @@ export default function DataSiswaPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
-        const res = await fetch("/api/siswa");
-        const json = await res.json();
-        setData(json);
+        const res = await fetch("/api/siswa", { cache: "no-store" });
+        setData(await res.json());
       } catch (err) {
         console.error("Gagal memuat data", err);
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    })();
   }, []);
 
   return (
@@ -74,7 +73,14 @@ export default function DataSiswaPage() {
                           <Pencil className="w-4 h-4" />
                         </Button>
                       </Link>
-                      <DeleteSiswaButton id={siswa.id} />
+                      <DeleteSiswaButton
+                        id={siswa.id}
+                        onSuccess={() =>
+                          setData((prev) =>
+                            prev.filter((s) => s.id !== siswa.id)
+                          )
+                        }
+                      />
                     </td>
                   </tr>
                 ))}

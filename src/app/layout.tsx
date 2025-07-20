@@ -18,8 +18,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="id" className={inter.className}>
       <body className="bg-gradient-to-b from-blue-50 to-white text-gray-900 min-h-screen scroll-smooth">
         <Wrapper>
-          <Toaster />
           {children}
+          <Toaster position="top-right" richColors />
         </Wrapper>
       </body>
     </html>
