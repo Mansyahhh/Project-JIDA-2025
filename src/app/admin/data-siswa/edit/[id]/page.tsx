@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { SiswaForm } from "@/components/admin/siswa/SiswaForm";
 import { SiswaFormValues } from "@/types/siswa";
 
 export default function EditSiswaPage() {
   const params = useParams();
-  const router = useRouter();
   const [siswa, setSiswa] = useState<SiswaFormValues | null>(null);
 
   useEffect(() => {
