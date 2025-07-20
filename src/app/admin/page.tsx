@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import DashboardHeader from "@/components/admin/DashboardHeader";
 
 function formatStatus(status: string) {
   return status
@@ -55,12 +56,8 @@ export default function AdminDashboard() {
   });
 
   return (
-    <main className="px-6 py-12 max-w-6xl mx-auto">
-      <h1 className="text-4xl md:text-5xl font-bold text-blue-800 mb-10 text-center">
-        Dashboard Admin
-      </h1>
-      <p>Selamat datang, Admin Aplikasi SekolahKu !</p>
-
+    <>
+      <DashboardHeader />
       {/* Total Siswa */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 justify-center items-stretch mb-6">
         <div className="bg-blue-100 text-blue-800 rounded-lg p-6 shadow text-center">
@@ -147,6 +144,6 @@ export default function AdminDashboard() {
       </div>
 
       {/* Filter End */}
-    </main>
+    </>
   );
 }
