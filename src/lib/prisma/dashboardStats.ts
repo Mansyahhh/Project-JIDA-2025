@@ -1,10 +1,10 @@
-// lib/prisma/dashboardStats.ts
 import { prisma } from "@/lib/prisma";
 
+// Statistik Siswa
 export async function getSiswaStats() {
   const total = await prisma.siswa.count();
   const laki = await prisma.siswa.count({
-    where: { jenisKelamin: "Laki-laki" },
+    where: { jenisKelamin: "Laki_laki" },
   });
   const perempuan = await prisma.siswa.count({
     where: { jenisKelamin: "Perempuan" },
@@ -13,6 +13,7 @@ export async function getSiswaStats() {
   return { total, laki, perempuan };
 }
 
+// Statistik Pegawai
 export async function getPegawaiStats() {
   const pendidik = await prisma.guru.count({
     where: { tipePegawai: "Pendidik" },
@@ -24,12 +25,11 @@ export async function getPegawaiStats() {
   return { pendidik, kependidikan };
 }
 
+// Statistik Pembayaran
 export async function getPembayaranStats() {
-  const total = await prisma.pembayaran.aggregate({
+  const result = await prisma.pembayaran.aggregate({
     _sum: { jumlah: true },
   });
 
-  return {
-    totalPembayaran: total._sum.jumlah || 0,
-  };
+  return { totalPembayaran: result._sum.jumlah || 0 };
 }

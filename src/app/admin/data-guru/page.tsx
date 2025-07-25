@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,7 +14,7 @@ export default async function DataGuruPage() {
   const guru = await prisma.guru.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-4 space-y-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Data Guru</h1>
         <Link href="/admin/data-guru/tambah">

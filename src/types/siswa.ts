@@ -1,38 +1,36 @@
 import { z } from "zod";
-import { STATUS_OPTIONS, StatusSiswa } from "./status";
 
-export const SiswaFormSchema = z.object({
-  id: z.string().optional(),
-  nisn: z
-    .string()
-    .length(10, "NISN harus terdiri dari 10 digit angka")
-    .regex(/^\d+$/, "NISN hanya boleh berisi angka"),
-  nama: z.string().min(1, "Nama tidak boleh kosong"),
-  kelas: z.string().min(1, "Kelas tidak boleh kosong"),
+type SiswaFormType = SiswaCreateValues & { id?: string };
+
+// --- Schema untuk tambah (tanpa id) ---
+export const SiswaCreateSchema = z.object({
+  nisn: z.string().min(10, "NISN harus 10 digit"),
+  nama: z.string().min(1, "Nama wajib diisi"),
+  kelas: z.string().min(1, "Kelas wajib diisi"),
+  jenisKelamin: z.enum(["Laki_laki", "Perempuan"]),
+  status: z.enum(["SiswaBaru", "MutasiMasuk"]),
   nik: z
     .string()
-    .regex(/^\d{16}$/, "NIK harus 16 digit angka")
     .optional()
-    .or(z.literal("")),
-  jenisKelamin: z.enum(["Laki-laki", "Perempuan"]).optional(),
+    .refine((val) => !val || val.length === 16, {
+      message: "NIK harus 16 digit",
+    }),
   tempatLahir: z.string().optional(),
-  tanggalLahir: z
-    .string()
-    .refine((val) => !val || !isNaN(Date.parse(val)), {
-      message: "Format tanggal tidak valid",
-    })
-    .optional(),
+  tanggalLahir: z.string().optional(),
   alamat: z.string().optional(),
-  email: z.string().email("Format email tidak valid").optional(),
+  email: z.string().optional(),
   phone: z.string().optional(),
   namaAyah: z.string().optional(),
   namaIbu: z.string().optional(),
   namaWali: z.string().optional(),
-  penghasilanWali: z
-    .string()
-    .regex(/^\d+$/, "Penghasilan harus berupa angka")
-    .optional(),
-  status: z.enum(STATUS_OPTIONS.map((s) => s.value) as [string, ...string[]]),
+  penghasilanWali: z.number().optional(),
 });
 
-export type SiswaFormValues = z.infer<typeof SiswaFormSchema>;
+// --- Schema untuk edit (harus ada id) ---
+export const SiswaUpdateSchema = SiswaCreateSchema.extend({
+  id: z.string().min(1, "ID wajib diisi"),
+});
+
+export type SiswaCreateValues = z.infer<typeof SiswaCreateSchema>;
+export type SiswaUpdateValues = z.infer<typeof SiswaUpdateSchema>;
+export type SiswaFormValues = Partial<SiswaUpdateValues>;

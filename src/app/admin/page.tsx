@@ -1,25 +1,39 @@
 "use client";
 
-import DashboardHeader from "@/components/admin/DashboardHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { useEffect, useState } from "react";
 
+interface DashboardData {
+  siswa: { total: number; laki: number; perempuan: number };
+  pegawai: { pendidik: number; kependidikan: number };
+  pembayaran: { totalPembayaran: number };
+}
+
 export default function AdminDashboardPage() {
-  const [data, setData] = useState({
+  const [data, setData] = useState<DashboardData>({
     siswa: { total: 0, laki: 0, perempuan: 0 },
     pegawai: { pendidik: 0, kependidikan: 0 },
     pembayaran: { totalPembayaran: 0 },
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/dashboard", { cache: "no-store" });
-      const result = await res.json();
-      setData(result);
+      try {
+        const res = await fetch("/api/dashboard", { cache: "no-store" });
+        if (!res.ok) throw new Error("Gagal fetch data dashboard");
+        const result = await res.json();
+        setData(result);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
-
     fetchData();
   }, []);
+
+  if (loading) return <p className="p-6">Memuat data dashboard...</p>;
 
   const { siswa, pegawai, pembayaran } = data;
 
@@ -34,7 +48,7 @@ export default function AdminDashboardPage() {
 
       <StatCard
         title="Total Pembayaran"
-        value={`Rp ${pembayaran.totalPembayaran.toLocaleString()}`}
+        value={`Rp ${pembayaran.totalPembayaran.toLocaleString("id-ID")}`}
       />
     </div>
   );

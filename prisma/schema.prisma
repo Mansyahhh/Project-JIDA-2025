@@ -8,10 +8,35 @@ datasource db {
 }
 
 enum StatusSiswa {
-  Aktif
+  SiswaBaru
   MutasiMasuk
-  MutasiKeluar
-  Lulus
+}
+
+enum JenisKelamin {
+  Laki_laki
+  Perempuan
+}
+
+enum TipePegawai {
+  Pendidik
+  Kependidikan
+}
+
+enum JenisPembayaran {
+  Bangunan
+  Ujian
+  DaftarUlang
+  SPP
+  Seragam
+  Buku
+  Lainnya
+}
+
+enum metodePembayaran {
+  Tunai
+  QrCode
+  Transfer
+  EWallet
 }
 
 model Siswa {
@@ -29,23 +54,24 @@ model Siswa {
   namaIbu         String?
   namaWali        String?
   nik             String?
-  penghasilanWali String?
+  penghasilanWali Int?
   tanggalLahir    DateTime?
   tempatLahir     String?
   jenisKelamin    String?
-
-  pembayaran Pembayaran[]
+  status          StatusSiswa
+  pembayaran      Pembayaran[]
 }
+
 
 model Guru {
   id          String   @id @default(uuid())
   nama        String
-  jenisKelamin String
-  alamat       String?
+  jenisKelamin JenisKelamin
+  alamat     String?
   email       String   @unique
   phone       String?
-  tipePegawai String // "Pendidik" | "Kependidikan"
-  mapel       String? // misalnya: Matematika, IPA, dll
+  tipePegawai TipePegawai
+  mapel       String?
   pendidikanTerakhir String
   createdAt   DateTime @default(now())
 }
@@ -56,6 +82,10 @@ model Pembayaran {
   jumlah     Int
   keterangan String?
   tanggal    DateTime @default(now())
+  jenis     JenisPembayaran
+  metode     metodePembayaran
+  status     String?  // optional: "Lunas", "Pending"
 
   siswa Siswa @relation(fields: [siswaId], references: [id])
 }
+

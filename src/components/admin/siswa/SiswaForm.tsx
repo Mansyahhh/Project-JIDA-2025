@@ -1,249 +1,257 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SiswaFormSchema, SiswaFormValues } from "@/types/siswa";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import CurrencyInput from "react-currency-input-field";
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+  SiswaCreateSchema,
+  SiswaUpdateSchema,
+  SiswaCreateValues,
+  SiswaUpdateValues,
+} from "@/types/siswa";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
-import { STATUS_OPTIONS } from "@/types/status";
+type Props = {
+  defaultValues?: Partial<SiswaCreateValues & { id?: string }>;
+  mode?: "create" | "edit";
+};
 
-interface SiswaFormProps {
-  defaultValues?: SiswaFormValues;
-  mode: "tambah" | "edit";
-}
+type SiswaFormType = SiswaCreateValues & { id?: string };
 
-export function SiswaForm({ defaultValues, mode }: SiswaFormProps) {
+export function SiswaForm({ defaultValues, mode = "create" }: Props) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const schema = mode === "edit" ? SiswaUpdateSchema : SiswaCreateSchema;
+
+  const form = useForm<SiswaFormType>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      ...defaultValues,
+      penghasilanWali: defaultValues?.penghasilanWali ?? 0,
+    },
+  });
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-    control, // ← ini yang dibutuhkan oleh <Controller>
-  } = useForm<SiswaFormValues>({
-    resolver: zodResolver(SiswaFormSchema),
-    defaultValues,
-  });
+  } = form;
 
-  const onSubmit = async (data: SiswaFormValues) => {
-    setLoading(true);
-
+  /** FIXED onSubmit di dalam satu tempat */
+  const handleFormSubmit = async (values: SiswaFormType) => {
+    console.log("Payload siswa:", values);
     try {
-      const res = await fetch(
-        mode === "edit" ? `/api/siswa/${defaultValues?.id}` : "/api/siswa",
-        {
-          method: mode === "edit" ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const url =
+        mode === "edit" && values.id
+          ? `/api/siswa/${values.id}` // <--- ini penting
+          : "/api/siswa";
 
-      if (!res.ok) throw new Error("Gagal menyimpan data");
+      const method = mode === "edit" ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.error || "Gagal simpan siswa");
+        return;
+      }
 
       toast.success(
         mode === "edit"
-          ? "Data siswa berhasil diperbarui"
-          : "Data siswa berhasil ditambahkan"
+          ? "Siswa berhasil diperbarui"
+          : "Siswa berhasil ditambahkan"
       );
-
       router.push("/admin/data-siswa");
       router.refresh();
-    } catch (err) {
-      console.error(err); // atau gunakan "_" untuk menandakan tidak digunakan
-      toast.error("Terjadi kesalahan saat menyimpan data");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error submit:", error);
+      toast.error("Terjadi kesalahan");
     }
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>{mode === "edit" ? "Edit Siswa" : "Tambah Siswa"}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          autoComplete="off"
-          autoCorrect="off"
-        >
-          <div className="space-y-1">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+      {mode === "edit" && <input type="hidden" {...register("id")} />}
+
+      {/* Data Dasar */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Data Dasar</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-2">
+          <div>
             <Label htmlFor="nisn">NISN</Label>
-            <Input id="nisn" {...register("nisn")} disabled={mode === "edit"} />
+            <Input
+              id="nisn"
+              placeholder="10 digit NISN"
+              {...register("nisn")}
+            />
             {errors.nisn && (
-              <p className="text-sm text-red-500">{errors.nisn.message}</p>
+              <p className="text-red-500 text-sm">{errors.nisn.message}</p>
             )}
           </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="nama">Nama</Label>
-            <Input id="nama" {...register("nama")} />
+          <div>
+            <Label htmlFor="nama">Nama Lengkap</Label>
+            <Input
+              id="nama"
+              placeholder="Nama lengkap siswa"
+              {...register("nama")}
+            />
             {errors.nama && (
-              <p className="text-sm text-red-500">{errors.nama.message}</p>
+              <p className="text-red-500 text-sm">{errors.nama.message}</p>
             )}
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="kelas">Kelas</Label>
-            <Input id="kelas" {...register("kelas")} />
+            <Input
+              id="kelas"
+              placeholder="Contoh: X IPA 1"
+              {...register("kelas")}
+            />
             {errors.kelas && (
-              <p className="text-sm text-red-500">{errors.kelas.message}</p>
+              <p className="text-red-500 text-sm">{errors.kelas.message}</p>
             )}
           </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="nik">NIK</Label>
-            <Input id="nik" {...register("nik")} />
-            {errors.nik && (
-              <p className="text-sm text-red-500">{errors.nik.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="jenisKelamin">Jenis Kelamin</Label>
-            <RadioGroup
+            <select
               id="jenisKelamin"
-              defaultValue={defaultValues?.jenisKelamin || ""}
-              className="flex gap-4 p-2 bg-gray-50 rounded-md"
+              {...register("jenisKelamin")}
+              className="border rounded px-2 py-2 w-full"
             >
-              <div>
-                <RadioGroupItem
-                  value="Laki-laki"
-                  {...register("jenisKelamin")}
-                  id="laki"
-                  className="border border-gray-400 text-gray-900"
-                />
-                <Label htmlFor="laki">Laki-laki</Label>
-              </div>
-              <div>
-                <RadioGroupItem
-                  value="Perempuan"
-                  {...register("jenisKelamin")}
-                  id="perempuan"
-                  className="border border-gray-400 text-gray-900"
-                />
-                <Label htmlFor="perempuan">Perempuan</Label>
-              </div>
-            </RadioGroup>
+              <option value="">Pilih</option>
+              <option value="Laki_laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
             {errors.jenisKelamin && (
-              <p className="text-sm text-red-500">
+              <p className="text-red-500 text-sm">
                 {errors.jenisKelamin.message}
               </p>
             )}
           </div>
-
-          <div className="space-y-1">
+          <div>
+            <Label htmlFor="status">Status</Label>
+            <select
+              id="status"
+              {...register("status")}
+              className="border rounded px-2 py-2 w-full"
+            >
+              <option value="">Pilih</option>
+              <option value="SiswaBaru">Siswa Baru</option>
+              <option value="MutasiMasuk">Mutasi Masuk</option>
+            </select>
+            {errors.status && (
+              <p className="text-red-500 text-sm">{errors.status.message}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="nik">NIK</Label>
+            <Input id="nik" placeholder="16 digit NIK" {...register("nik")} />
+            {errors.nik && (
+              <p className="text-red-500 text-sm">{errors.nik.message}</p>
+            )}
+          </div>
+          <div>
             <Label htmlFor="tempatLahir">Tempat Lahir</Label>
             <Input id="tempatLahir" {...register("tempatLahir")} />
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="tanggalLahir">Tanggal Lahir</Label>
             <Input
               id="tanggalLahir"
               type="date"
               {...register("tanggalLahir")}
             />
-            {errors.tanggalLahir && (
-              <p className="text-sm text-red-500">
-                {errors.tanggalLahir.message}
-              </p>
-            )}
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="space-y-1">
+      {/* Alamat & Kontak */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Alamat & Kontak</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-2">
+          <div>
             <Label htmlFor="alamat">Alamat</Label>
             <Input id="alamat" {...register("alamat")} />
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="email">Email</Label>
-            <Input id="email" {...register("email")} />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
+            <Input id="email" type="email" {...register("email")} />
           </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="noHp">No. HP</Label>
-            <Input id="noHp" {...register("phone")} />
+          <div>
+            <Label htmlFor="phone">No. Telepon</Label>
+            <Input id="phone" type="tel" {...register("phone")} />
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="space-y-1">
+      {/* Orang Tua & Wali */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Orang Tua & Wali</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-2">
+          <div>
             <Label htmlFor="namaAyah">Nama Ayah</Label>
             <Input id="namaAyah" {...register("namaAyah")} />
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="namaIbu">Nama Ibu</Label>
             <Input id="namaIbu" {...register("namaIbu")} />
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="namaWali">Nama Wali</Label>
             <Input id="namaWali" {...register("namaWali")} />
           </div>
-
-          <div className="space-y-1">
+          <div>
             <Label htmlFor="penghasilanWali">Penghasilan Wali</Label>
-            <Input id="penghasilanWali" {...register("penghasilanWali")} />
+            <Controller
+              control={control}
+              name="penghasilanWali"
+              render={({ field }) => (
+                <CurrencyInput
+                  id="penghasilanWali"
+                  prefix="Rp "
+                  decimalsLimit={2}
+                  value={field.value}
+                  onValueChange={(value) =>
+                    field.onChange(value ? parseInt(value) : 0)
+                  }
+                  className="border rounded px-2 py-2 w-full"
+                />
+              )}
+            />
             {errors.penghasilanWali && (
-              <p className="text-sm text-red-500">
+              <p className="text-red-500 text-sm">
                 {errors.penghasilanWali.message}
               </p>
             )}
           </div>
+        </CardContent>
+      </Card>
 
-          <Controller
-            name="status"
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih status siswa" />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
+      <Separator />
 
-          <div className="md:col-span-2 mt-6 flex justify-end">
-            <Button
-              type="submit"
-              disabled={loading}
-              className="cursor-pointer w-full sm:w-auto"
-            >
-              {loading
-                ? "Menyimpan..."
-                : mode === "edit"
-                ? "Simpan Perubahan"
-                : "Tambah Siswa"}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+        >
+          {mode === "edit" ? "Update Siswa" : "Tambah Siswa"}
+        </Button>
+      </div>
+    </form>
   );
 }

@@ -13,8 +13,18 @@ export default function EditSiswaPage() {
     const fetchSiswa = async () => {
       const res = await fetch(`/api/siswa/${params.id}`);
       if (!res.ok) return;
+
       const data = await res.json();
-      setSiswa(data);
+
+      // Convert tanggalLahir (Date) → string yyyy-MM-dd
+      const tanggalLahir = data.tanggalLahir
+        ? new Date(data.tanggalLahir).toISOString().split("T")[0]
+        : "";
+
+      setSiswa({
+        ...data,
+        tanggalLahir,
+      });
     };
 
     fetchSiswa();

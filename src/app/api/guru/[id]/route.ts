@@ -1,24 +1,49 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { GuruFormSchema } from "@/types/guru";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
-  const guru = await prisma.guru.findUnique({ where: { id: params.id } });
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params;
+  const guru = await prisma.guru.findUnique({ where: { id } });
+  if (!guru)
+    return NextResponse.json(
+      { error: "Guru tidak ditemukan" },
+      { status: 404 }
+    );
   return NextResponse.json(guru);
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // params adalah Promise
 ) {
-  const data = await req.json();
-  const guru = await prisma.guru.update({ where: { id: params.id }, data });
-  return NextResponse.json(guru);
+  const { id } = await context.params; // harus di-await dulu
+
+  const body = await req.json();
+  const jenisKelaminMap: Record<string, "Laki_laki" | "Perempuan"> = {
+    "Laki-laki": "Laki_laki",
+    Perempuan: "Perempuan",
+  };
+
+  const updatedGuru = await prisma.guru.update({
+    where: { id },
+    data: {
+      ...body,
+      jenisKelamin: jenisKelaminMap[body.jenisKelamin],
+    },
+  });
+
+  return NextResponse.json(updatedGuru);
 }
 
 export async function DELETE(
-  _: Request,
-  { params }: { params: { id: string } }
+  req: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
-  await prisma.guru.delete({ where: { id: params.id } });
-  return NextResponse.json({ message: "Guru dihapus" });
+  const { id } = await context.params;
+  await prisma.guru.delete({ where: { id } });
+  return NextResponse.json({ message: "Guru berhasil dihapus" });
 }

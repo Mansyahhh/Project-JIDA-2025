@@ -1,40 +1,50 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import type { SiswaFormValues } from "@/types/siswa";
+import prisma from "@/lib/prisma";
+import bcryptjs from "bcryptjs";
+import { SiswaCreateSchema } from "@/types/siswa";
+import CurrencyInput from "react-currency-input-field";
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const body: SiswaFormValues = await req.json();
-
-    const { tanggalLahir, ...rest } = body;
-
-    const siswa = await prisma.siswa.create({
-      data: {
-        ...rest,
-        password: "siswa123", // default
-        ...(tanggalLahir ? { tanggalLahir: new Date(tanggalLahir) } : {}),
-      },
-    });
-
-    return NextResponse.json(siswa, { status: 201 });
+    const siswa = await prisma.siswa.findMany();
+    return NextResponse.json(siswa);
   } catch (error) {
-    console.error("[SISWA POST]", error);
+    console.error("Gagal ambil siswa:", error);
     return NextResponse.json(
-      { message: "Terjadi kesalahan saat menambahkan siswa." },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
 
-// GET
-export async function GET() {
+export async function POST(req: Request) {
   try {
-    const siswa = await prisma.siswa.findMany({
-      orderBy: { createdAt: "desc" },
+    const body = await req.json();
+    const data = SiswaCreateSchema.parse(body);
+    const tanggalLahir = data.tanggalLahir ? new Date(data.tanggalLahir) : null;
+
+    const existing = await prisma.siswa.findUnique({
+      where: { nisn: data.nisn },
     });
-    return NextResponse.json(siswa);
+    if (existing) {
+      return NextResponse.json(
+        { error: "NISN sudah terdaftar" },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcryptjs.hash("123456", 10);
+
+    const siswa = await prisma.siswa.create({
+      data: { ...data, tanggalLahir, password: hashedPassword },
+    });
+
+    return NextResponse.json(siswa, { status: 201 });
   } catch (error) {
-    console.error("Gagal ambil data siswa", error);
-    return NextResponse.json({ error: "Gagal ambil data" }, { status: 500 });
+    console.error("Gagal tambah siswa:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

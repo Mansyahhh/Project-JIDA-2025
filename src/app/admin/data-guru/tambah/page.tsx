@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import GuruForm from "@/components/guru/GuruForm";
+import { GuruForm } from "@/components/guru/GuruForm"; // BENAR
 import { GuruFormValues } from "@/types/guru";
 
 export default function TambahGuruPage() {

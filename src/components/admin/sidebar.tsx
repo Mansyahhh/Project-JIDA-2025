@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 
 const menu = [
-  { href: "/admin", label: "Beranda", icon: <FaHome /> },
+  { href: "/admin", label: "Dashboard", icon: <FaHome /> },
   { href: "/admin/data-siswa", label: "Data Siswa", icon: <FaUsers /> },
   {
     href: "/admin/data-guru",
@@ -27,7 +27,10 @@ export default function SidebarAdmin() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-white shadow-md flex flex-col">
       <div className="text-center py-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-blue-700">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-blue-700">
+          Admin Panel <br />
+          <span className="text-green-600">SekolahKu</span>
+        </h2>
       </div>
 
       <nav className="flex-1 p-4 space-y-2">

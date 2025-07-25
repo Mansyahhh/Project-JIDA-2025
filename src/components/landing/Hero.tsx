@@ -34,10 +34,11 @@ export default function Hero() {
       <div className="md:w-1/2">
         <Image
           src="/studying.svg"
-          width={200}
-          height={200}
+          width={150}
+          height={150}
           alt="Ilustrasi belajar"
           className="w-full max-w-md mx-auto"
+          priority
         />
       </div>
     </section>
