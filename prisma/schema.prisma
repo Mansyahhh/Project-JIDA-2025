@@ -2,8 +2,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -39,17 +44,51 @@ enum metodePembayaran {
   EWallet
 }
 
+enum KelasEnum {
+  KELAS_1A
+  KELAS_1B
+  KELAS_1C
+  KELAS_2A
+  KELAS_2B
+  KELAS_2C
+  KELAS_3A
+  KELAS_3B
+  KELAS_3C
+  KELAS_4A
+  KELAS_4B
+  KELAS_4C
+  KELAS_5A
+  KELAS_5B
+  KELAS_5C
+  KELAS_6A
+  KELAS_6B
+  KELAS_6C
+}
+
+enum EnumBerlakuUntuk {
+  SEMUA
+  KELAS
+  SISWA
+}
+
+enum EnumMetodePembayaran {
+  TUNAI
+  TRANSFER
+  LAINNYA
+}
+
+
 model Siswa {
-  id              String    @id @default(uuid())
+  id              String        @id @default(uuid())
   nama            String
-  kelas           String
-  nisn            String    @unique
+  kelas           KelasEnum
+  nisn            String        @unique
   password        String
   alamat          String?
-  createdAt       DateTime  @default(now())
+  createdAt       DateTime      @default(now())
   email           String?
   phone           String?
-  updatedAt       DateTime  @updatedAt
+  updatedAt       DateTime      @updatedAt
   namaAyah        String?
   namaIbu         String?
   namaWali        String?
@@ -60,6 +99,7 @@ model Siswa {
   jenisKelamin    String?
   status          StatusSiswa
   pembayaran      Pembayaran[]
+  tagihan         Tagihan[]     @relation("SiswaTagihan") // <-- tambahkan ini
 }
 
 
@@ -76,16 +116,29 @@ model Guru {
   createdAt   DateTime @default(now())
 }
 
-model Pembayaran {
-  id         String   @id @default(uuid())
-  siswaId    String
-  jumlah     Int
-  keterangan String?
-  tanggal    DateTime @default(now())
-  jenis     JenisPembayaran
-  metode     metodePembayaran
-  status     String?  // optional: "Lunas", "Pending"
-
-  siswa Siswa @relation(fields: [siswaId], references: [id])
+model Tagihan {
+  id          String    @id @default(uuid())
+  nama        String
+  deskripsi   String?
+  jumlah      Int
+  berlakuUntuk EnumBerlakuUntuk
+  kelas       KelasEnum?   
+  siswaId     String?
+  siswa       Siswa?     @relation("SiswaTagihan", fields: [siswaId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  pembayaran  Pembayaran[]
 }
 
+
+model Pembayaran {
+  id          String   @id @default(uuid())
+  siswaId     String
+  tagihanId   String
+  jumlahBayar Int
+  tanggal     DateTime @default(now())
+  metode      EnumMetodePembayaran
+  keterangan  String?
+  siswa       Siswa    @relation(fields: [siswaId], references: [id])
+  tagihan     Tagihan  @relation(fields: [tagihanId], references: [id])
+}

@@ -26,13 +26,12 @@ export function DeleteSiswaButton({ id, onSuccess }: Props) {
       const res = await fetch(`/api/siswa/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
 
-      toast.success("✅ Siswa berhasil dihapus");
-      onSuccess();
+      toast.success("Siswa berhasil dihapus"); // toast hanya sekali
+      if (onSuccess) onSuccess(); // onSuccess hanya refresh data atau navigate
     } catch {
-      toast.error("❌ Gagal menghapus siswa");
+      toast.error("Gagal menghapus siswa");
     }
   };
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

@@ -1,19 +1,29 @@
-// src/app/api/dashboard/route.ts
-import {
-  getSiswaStats,
-  getPegawaiStats,
-  getPembayaranStats,
-} from "@/lib/prisma/dashboardStats";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  try {
-    const siswa = await getSiswaStats();
-    const pegawai = await getPegawaiStats();
-    const pembayaran = await getPembayaranStats();
-    return NextResponse.json({ siswa, pegawai, pembayaran });
-  } catch (error) {
-    console.error("Gagal ambil statistik dashboard:", error);
-    return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
-  }
+  const totalSiswa = await prisma.siswa.count();
+  const totalGuru = await prisma.guru.count();
+  const totalTagihan = await prisma.tagihan.aggregate({
+    _sum: { jumlah: true },
+  });
+  const totalPembayaran = await prisma.pembayaran.aggregate({
+    _sum: { jumlahBayar: true },
+  });
+
+  const totalSiswaLaki = await prisma.siswa.count({
+    where: { jenisKelamin: "Laki_laki" },
+  });
+  const totalSiswaPerempuan = await prisma.siswa.count({
+    where: { jenisKelamin: "Perempuan" },
+  });
+
+  return NextResponse.json({
+    totalSiswa,
+    totalGuru,
+    totalTagihan: totalTagihan._sum.jumlah ?? 0,
+    totalPembayaran: totalPembayaran._sum.jumlahBayar ?? 0,
+    totalSiswaLaki,
+    totalSiswaPerempuan,
+  });
 }

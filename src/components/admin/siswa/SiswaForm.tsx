@@ -15,25 +15,36 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
+import { KelasEnum } from "@/types/siswa";
 
 type Props = {
-  defaultValues?: Partial<SiswaCreateValues & { id?: string }>;
+  defaultValues?: Partial<SiswaUpdateValues>;
   mode?: "create" | "edit";
 };
 
-type SiswaFormType = SiswaCreateValues & { id?: string };
-
 export function SiswaForm({ defaultValues, mode = "create" }: Props) {
   const router = useRouter();
-  const schema = mode === "edit" ? SiswaUpdateSchema : SiswaCreateSchema;
 
-  const form = useForm<SiswaFormType>({
+  // **Gunakan schema & type sesuai mode**
+  const schema = mode === "edit" ? SiswaUpdateSchema : SiswaCreateSchema;
+  type FormValues = typeof schema extends typeof SiswaUpdateSchema
+    ? SiswaUpdateValues
+    : SiswaCreateValues;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       ...defaultValues,
       penghasilanWali: defaultValues?.penghasilanWali ?? 0,
-    },
+    } as any,
   });
 
   const {
@@ -43,13 +54,11 @@ export function SiswaForm({ defaultValues, mode = "create" }: Props) {
     formState: { errors },
   } = form;
 
-  /** FIXED onSubmit di dalam satu tempat */
-  const handleFormSubmit = async (values: SiswaFormType) => {
-    console.log("Payload siswa:", values);
+  const handleFormSubmit = async (values: FormValues) => {
     try {
       const url =
-        mode === "edit" && values.id
-          ? `/api/siswa/${values.id}` // <--- ini penting
+        mode === "edit" && "id" in values
+          ? `/api/siswa/${values.id}`
           : "/api/siswa";
 
       const method = mode === "edit" ? "PATCH" : "POST";
@@ -80,9 +89,11 @@ export function SiswaForm({ defaultValues, mode = "create" }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      {mode === "edit" && <input type="hidden" {...register("id")} />}
-
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+      autoComplete="off"
+    >
       {/* Data Dasar */}
       <Card>
         <CardHeader>
@@ -113,10 +124,26 @@ export function SiswaForm({ defaultValues, mode = "create" }: Props) {
           </div>
           <div>
             <Label htmlFor="kelas">Kelas</Label>
-            <Input
-              id="kelas"
-              placeholder="Contoh: X IPA 1"
-              {...register("kelas")}
+            <Controller
+              control={control}
+              name="kelas"
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih Kelas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {KelasEnum.map((kelas) => (
+                      <SelectItem key={kelas} value={kelas}>
+                        {kelas.replace("KELAS_", "Kelas ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.kelas && (
               <p className="text-red-500 text-sm">{errors.kelas.message}</p>
@@ -193,6 +220,9 @@ export function SiswaForm({ defaultValues, mode = "create" }: Props) {
           <div>
             <Label htmlFor="phone">No. Telepon</Label>
             <Input id="phone" type="tel" {...register("phone")} />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
           </div>
         </CardContent>
       </Card>
