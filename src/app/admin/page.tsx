@@ -1,6 +1,7 @@
 // src/app/admin/page.tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatRupiah } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/getBaseUrl";
 
 type DashboardData = {
   totalSiswa: number;
@@ -12,8 +13,9 @@ type DashboardData = {
 };
 
 async function getDashboardData() {
-  const res = await fetch("/api/dashboard", { cache: "no-store" });
-
+  const res = await fetch(`${getBaseUrl()}/api/dashboard`, {
+    cache: "no-store",
+  });
   return res.json();
 }
 
