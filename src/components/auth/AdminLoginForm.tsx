@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
+import { getSession } from "next-auth/react";
 
 export default function AdminLoginForm() {
   const [username, setUsername] = useState("");
@@ -29,7 +30,9 @@ export default function AdminLoginForm() {
     if (result?.error) {
       toast.error("Username atau password salah");
     } else {
-      toast.success("Berhasil login sebagai admin");
+      const session = await getSession();
+      const role = session?.user?.role || "user";
+      toast.success(`Berhasil login sebagai ${role.toLowerCase()}`);
       router.push("/admin");
     }
     setLoading(false);
@@ -55,7 +58,8 @@ export default function AdminLoginForm() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
-              placeholder="Username / Email"
+              placeholder="Email"
+              type="email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
