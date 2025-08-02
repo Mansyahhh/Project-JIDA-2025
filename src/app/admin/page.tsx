@@ -1,83 +1,96 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatRupiah } from "@/lib/utils";
-import { getBaseUrl } from "@/lib/getBaseUrl";
-
-type DashboardData = {
-  totalSiswa: number;
-  totalGuru: number;
-  totalTagihan: number;
-  totalPembayaran: number;
-  totalSiswaLaki: number;
-  totalSiswaPerempuan: number;
-};
-
-async function getDashboardData(): Promise<DashboardData> {
-  const url = `${getBaseUrl()}/api/dashboard`;
-
-  // Log URL yang digunakan untuk fetch
-  console.log("Fetching dashboard data from:", url);
-
-  const res = await fetch(url, { cache: "no-store" });
-
-  // Kalau gagal → log isi HTML/teks agar mudah debugging
-  if (!res.ok) {
-    console.error(
-      "Dashboard API response not OK:",
-      res.status,
-      await res.text()
-    );
-    throw new Error("Failed to fetch dashboard data");
-  }
-
-  return res.json();
-}
+import { prisma } from "@/lib/prisma";
+import {
+  Users,
+  UserCheck,
+  DollarSign,
+  CreditCard,
+  User,
+  UserRound,
+} from "lucide-react";
 
 export default async function AdminPage() {
-  const data = await getDashboardData();
+  const totalSiswa = await prisma.siswa.count();
+  const totalGuru = await prisma.guru.count();
+  const totalTagihan = await prisma.tagihan.aggregate({
+    _sum: { jumlah: true },
+  });
+  const totalPembayaran = await prisma.pembayaran.aggregate({
+    _sum: { jumlahBayar: true },
+  });
+  const totalSiswaLaki = await prisma.siswa.count({
+    where: { jenisKelamin: "Laki_laki" },
+  });
+  const totalSiswaPerempuan = await prisma.siswa.count({
+    where: { jenisKelamin: "Perempuan" },
+  });
+
+  const cards = [
+    {
+      title: "Total Siswa",
+      value: totalSiswa,
+      icon: Users,
+      color: "bg-blue-100 text-blue-600",
+    },
+    {
+      title: "Total Guru",
+      value: totalGuru,
+      icon: UserCheck,
+      color: "bg-green-100 text-green-600",
+    },
+    {
+      title: "Total Tagihan",
+      value: formatRupiah(totalTagihan._sum.jumlah ?? 0),
+      icon: DollarSign,
+      color: "bg-yellow-100 text-yellow-600",
+      valueColor: "text-yellow-600",
+    },
+    {
+      title: "Total Pembayaran",
+      value: formatRupiah(totalPembayaran._sum.jumlahBayar ?? 0),
+      icon: CreditCard,
+      color: "bg-purple-100 text-purple-600",
+      valueColor: "text-purple-600",
+    },
+    {
+      title: "Siswa Laki-laki",
+      value: totalSiswaLaki,
+      icon: User,
+      color: "bg-cyan-100 text-cyan-600",
+    },
+    {
+      title: "Siswa Perempuan",
+      value: totalSiswaPerempuan,
+      icon: UserRound,
+      color: "bg-pink-100 text-pink-600",
+    },
+  ];
 
   return (
     <div className="p-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Siswa</CardTitle>
-        </CardHeader>
-        <CardContent>{data.totalSiswa}</CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Guru</CardTitle>
-        </CardHeader>
-        <CardContent>{data.totalGuru}</CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Tagihan</CardTitle>
-        </CardHeader>
-        <CardContent>{formatRupiah(data.totalTagihan)}</CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Pembayaran</CardTitle>
-        </CardHeader>
-        <CardContent>{formatRupiah(data.totalPembayaran)}</CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Siswa Laki-laki</CardTitle>
-        </CardHeader>
-        <CardContent>{data.totalSiswaLaki}</CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Siswa Perempuan</CardTitle>
-        </CardHeader>
-        <CardContent>{data.totalSiswaPerempuan}</CardContent>
-      </Card>
+      {cards.map((card) => (
+        <Card
+          key={card.title}
+          className="shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-base font-semibold">
+              {card.title}
+            </CardTitle>
+            <card.icon className={`h-10 w-10 p-2 rounded-full ${card.color}`} />
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`text-4xl font-bold ${
+                card.valueColor ?? "text-gray-800"
+              }`}
+            >
+              {card.value}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
