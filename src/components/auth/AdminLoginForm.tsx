@@ -2,40 +2,35 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
-import { getSession } from "next-auth/react";
 
 export default function AdminLoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+
     const result = await signIn("credentials", {
-      redirect: false,
+      redirect: true, // ✅ NextAuth handle redirect
       email: username,
       password: password,
+      callbackUrl: "/admin", // ✅ langsung ke dashboard
     });
 
     if (result?.error) {
       toast.error("Username atau password salah");
-    } else {
-      const session = await getSession();
-      const role = session?.user?.role || "user";
-      toast.success(`Berhasil login sebagai ${role.toLowerCase()}`);
-      router.push("/admin");
+      setLoading(false);
     }
-    setLoading(false);
+    // tidak perlu router.push() manual
   }
 
   return (
