@@ -2,15 +2,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// datasource db {
+//   provider = "sqlite"
+//   url      = env("DATABASE_URL")
+// }
 
 enum StatusSiswa {
   SiswaBaru
@@ -141,4 +141,13 @@ model Pembayaran {
   keterangan  String?
   siswa       Siswa    @relation(fields: [siswaId], references: [id])
   tagihan     Tagihan  @relation(fields: [tagihanId], references: [id])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("admin") // "admin" | "superadmin"
+  createdAt DateTime @default(now())
 }

@@ -11,7 +11,7 @@ export default function TambahSiswaPage() {
           <CardTitle>Tambah Siswa Baru</CardTitle>
         </CardHeader>
         <CardContent>
-          <SiswaForm mode="tambah" />
+          <SiswaForm mode="create" />
         </CardContent>
       </Card>
     </div>

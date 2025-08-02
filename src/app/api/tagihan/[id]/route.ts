@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-type Params = { params: Promise<{ id: string }> };
-
-export async function GET(_: Request, context: Params) {
-  const { id } = await context.params; // <- WAJIB di-await sekarang
+// GET Tagihan by ID
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
   const tagihan = await prisma.tagihan.findUnique({
-    where: { id },
+    where: { id: params.id },
     include: { siswa: true },
   });
 
@@ -16,20 +17,17 @@ export async function GET(_: Request, context: Params) {
       { status: 404 }
     );
   }
-
   return NextResponse.json(tagihan);
 }
 
 // PATCH Tagihan by ID
 export async function PATCH(
   req: Request,
-  context: { params: Promise<{ id: string }> } // <- params sekarang Promise
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // harus di-await
   const data = await req.json();
-
   const updated = await prisma.tagihan.update({
-    where: { id },
+    where: { id: params.id },
     data: {
       nama: data.nama,
       deskripsi: data.deskripsi || null,
@@ -40,20 +38,19 @@ export async function PATCH(
     },
   });
 
-  return new Response(JSON.stringify(updated), { status: 200 });
+  return NextResponse.json(updated);
 }
 
 // DELETE Tagihan by ID
 export async function DELETE(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
+  _req: Request,
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // harus di-await
   try {
-    await prisma.tagihan.delete({ where: { id } });
-    return new Response(null, { status: 204 }); // OK
+    await prisma.tagihan.delete({ where: { id: params.id } });
+    return NextResponse.json({ message: "Tagihan berhasil dihapus" });
   } catch (error) {
     console.error(error);
-    return new Response("Gagal hapus tagihan", { status: 500 });
+    return NextResponse.json({ error: "Gagal hapus tagihan" }, { status: 500 });
   }
 }

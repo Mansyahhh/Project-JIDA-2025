@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcryptjs from "bcryptjs";
 import { SiswaCreateSchema } from "@/types/siswa";
-import CurrencyInput from "react-currency-input-field";
 
 export async function GET() {
   try {

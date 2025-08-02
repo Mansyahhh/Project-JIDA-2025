@@ -24,7 +24,12 @@ export default function TambahPembayaranPage() {
       method: "POST",
       body: JSON.stringify(data),
     });
-    if (!res.ok) return toast.error("Gagal tambah pembayaran");
+
+    if (!res.ok) {
+      toast.error("Gagal tambah pembayaran");
+      return; // <-- cukup return kosong
+    }
+
     toast.success("Pembayaran berhasil ditambahkan");
     router.push("/admin/pembayaran");
     router.refresh();

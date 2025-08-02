@@ -32,7 +32,7 @@ export default function DeleteGuruButton({ id }: { id: string }) {
 
         toast.success("Data guru berhasil dihapus");
         router.refresh();
-      } catch (error) {
+      } catch {
         toast.error("Terjadi kesalahan saat menghapus");
       }
     });

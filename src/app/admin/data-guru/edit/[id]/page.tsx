@@ -3,24 +3,43 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { GuruForm } from "@/components/guru/GuruForm";
-import { GuruFormValues } from "@/types/guru";
+import { Guru, GuruFormValues } from "@/types/guru";
 import { toast } from "sonner";
 
 export default function EditGuruPage() {
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const router = useRouter();
   const [guru, setGuru] = useState<GuruFormValues | null>(null);
 
   useEffect(() => {
     const fetchGuru = async () => {
-      const res = await fetch(`/api/guru/${params.id}`);
-      if (!res.ok) {
-        toast.error("Gagal mengambil data guru");
-        return;
+      try {
+        const res = await fetch(`/api/guru/${params.id}`);
+        if (!res.ok) {
+          toast.error("Gagal mengambil data guru");
+          return;
+        }
+
+        const data: Guru = await res.json();
+
+        // hanya ambil field yang diperlukan form (tanpa destructuring field yang tidak dipakai)
+        const formValues: GuruFormValues = {
+          nama: data.nama,
+          jenisKelamin: data.jenisKelamin,
+          alamat: data.alamat,
+          email: data.email,
+          phone: data.phone,
+          tipePegawai: data.tipePegawai,
+          mapel: data.mapel,
+          pendidikanTerakhir: data.pendidikanTerakhir,
+        };
+        setGuru(formValues);
+      } catch (error) {
+        console.error("Error fetch guru:", error);
+        toast.error("Terjadi kesalahan");
       }
-      const data = await res.json();
-      setGuru(data);
     };
+
     fetchGuru();
   }, [params.id]);
 
@@ -32,12 +51,11 @@ export default function EditGuruPage() {
         body: JSON.stringify(values),
       });
 
-      // hanya parse json kalau benar-benar ada body
-      let data: any = null;
+      let data: { error?: string } | null = null;
       try {
         data = await res.json();
-      } catch (_) {
-        data = null; // kalau kosong, abaikan error JSON.parse
+      } catch {
+        data = null;
       }
 
       if (!res.ok) {

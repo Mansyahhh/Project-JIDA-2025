@@ -25,7 +25,7 @@ export default function Hero() {
             href="/login"
             className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded"
           >
-            Masuk Siswa
+            Masuk Super Admin
           </Link>
         </div>
       </div>

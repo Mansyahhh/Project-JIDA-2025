@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-type SiswaFormType = SiswaCreateValues & { id?: string };
+// --- Enums ---
 export const EnumBerlakuUntuk = ["SEMUA", "KELAS", "SISWA"] as const;
 export const EnumMetodePembayaran = ["TUNAI", "TRANSFER", "LAINNYA"] as const;
 export const KelasEnum = [
@@ -24,13 +24,16 @@ export const KelasEnum = [
   "KELAS_6C",
 ] as const;
 
+export const JenisKelaminEnum = ["Laki_laki", "Perempuan"] as const;
+export const StatusSiswaEnum = ["SiswaBaru", "MutasiMasuk"] as const;
+
 // --- Schema untuk tambah (tanpa id) ---
 export const SiswaCreateSchema = z.object({
   nisn: z.string().min(10, "NISN harus 10 digit"),
   nama: z.string().min(1, "Nama wajib diisi"),
   kelas: z.enum(KelasEnum, { message: "Kelas wajib dipilih" }),
-  jenisKelamin: z.enum(["Laki_laki", "Perempuan"]),
-  status: z.enum(["SiswaBaru", "MutasiMasuk"]),
+  jenisKelamin: z.enum(JenisKelaminEnum),
+  status: z.enum(StatusSiswaEnum),
   nik: z
     .string()
     .optional()
@@ -83,7 +86,9 @@ export const PembayaranCreateSchema = z.object({
   siswaId: z.string().min(1, "Siswa wajib diisi"),
   tagihanId: z.string().min(1, "Tagihan wajib diisi"),
   jumlahBayar: z.number().min(1, "Jumlah bayar wajib diisi"),
-  metode: z.enum(EnumMetodePembayaran),
+  metode: z.enum(EnumMetodePembayaran, {
+    message: "Metode pembayaran wajib dipilih",
+  }),
   keterangan: z.string().optional(),
 });
 

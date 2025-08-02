@@ -35,9 +35,10 @@ export function PembayaranForm({
     resolver: zodResolver(PembayaranFormSchema),
     defaultValues: defaultValues || {
       siswaId: "",
-      jumlah: 0,
+      tagihanId: "",
+      jumlahBayar: 0,
       tanggal: new Date().toISOString().slice(0, 10),
-      jenis: "",
+      metode: "TUNAI",
       keterangan: "",
     },
   });
@@ -67,17 +68,32 @@ export function PembayaranForm({
           )}
         />
 
+        {/* tagihanId */}
+        <FormField
+          control={form.control}
+          name="tagihanId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tagihan</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Masukkan ID Tagihan" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* jumlah */}
         <FormField
           control={form.control}
-          name="jumlah"
+          name="jumlahBayar"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Jumlah Pembayaran</FormLabel>
               <FormControl>
                 <InputCurrency
-                  value={field.value ?? 0}
-                  onChange={(val) => field.onChange(val)}
+                  value={Number(field.value) || 0}
+                  onChange={(val: number) => field.onChange(val)}
                   placeholder="Contoh: 2.500.000"
                 />
               </FormControl>
@@ -86,15 +102,19 @@ export function PembayaranForm({
           )}
         />
 
-        {/* jenis */}
+        {/* metode */}
         <FormField
           control={form.control}
-          name="jenis"
+          name="metode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Jenis Pembayaran</FormLabel>
+              <FormLabel>Metode Pembayaran</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Contoh: SPP, Uang Gedung, dll" />
+                <select {...field} className="w-full border rounded px-2 py-1">
+                  <option value="TUNAI">Tunai</option>
+                  <option value="TRANSFER">Transfer</option>
+                  <option value="LAINNYA">Lainnya</option>
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>

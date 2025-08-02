@@ -1,4 +1,3 @@
-// /app/admin/pembayaran/components/columns.ts
 import { ColumnDef } from "@tanstack/react-table";
 import { PembayaranWithSiswa } from "@/types/pembayaran";
 import { formatRupiah, formatTanggal } from "@/lib/formatter";
@@ -12,7 +11,7 @@ export const columns: ColumnDef<PembayaranWithSiswa>[] = [
   },
   {
     header: "Jumlah",
-    accessorFn: (row) => formatRupiah(row.jumlah),
+    accessorFn: (row) => formatRupiah(row.jumlahBayar), // <- ubah
   },
   {
     header: "Tanggal",

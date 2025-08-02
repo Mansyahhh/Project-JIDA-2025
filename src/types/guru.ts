@@ -16,3 +16,10 @@ export const GuruFormSchema = z.object({
 });
 
 export type GuruFormValues = z.infer<typeof GuruFormSchema>;
+
+// Tambahan untuk hasil fetch API
+export type Guru = GuruFormValues & {
+  id: string;
+  createdAt?: string;
+  updatedAt?: string;
+};

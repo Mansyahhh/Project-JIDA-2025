@@ -1,4 +1,3 @@
-// components/admin/Sidebar.tsx
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,22 +8,35 @@ import {
   FaMoneyBill,
   FaSignOutAlt,
   FaFileInvoiceDollar,
+  FaUserShield,
 } from "react-icons/fa";
-
-const menu = [
-  { href: "/admin", label: "Dashboard", icon: <FaHome /> },
-  { href: "/admin/data-siswa", label: "Data Siswa", icon: <FaUsers /> },
-  {
-    href: "/admin/data-guru",
-    label: "Data Guru",
-    icon: <FaChalkboardTeacher />,
-  },
-  { href: "/admin/tagihan", label: "Tagihan", icon: <FaFileInvoiceDollar /> }, // <-- Tambahan
-  { href: "/admin/pembayaran", label: "Pembayaran", icon: <FaMoneyBill /> },
-];
+import { useSession, signOut } from "next-auth/react";
 
 export default function SidebarAdmin() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const baseMenu = [
+    { href: "/admin", label: "Dashboard", icon: <FaHome /> },
+    { href: "/admin/data-siswa", label: "Data Siswa", icon: <FaUsers /> },
+    {
+      href: "/admin/data-guru",
+      label: "Data Guru",
+      icon: <FaChalkboardTeacher />,
+    },
+    { href: "/admin/tagihan", label: "Tagihan", icon: <FaFileInvoiceDollar /> },
+    { href: "/admin/pembayaran", label: "Pembayaran", icon: <FaMoneyBill /> },
+  ];
+
+  // menu tambahan khusus superadmin
+  const superAdminMenu = [
+    { href: "/admin/users", label: "Manajemen Admin", icon: <FaUserShield /> },
+  ];
+
+  const menu =
+    session?.user?.role === "superadmin"
+      ? [...baseMenu, ...superAdminMenu]
+      : baseMenu;
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-white shadow-md flex flex-col">
@@ -59,7 +71,10 @@ export default function SidebarAdmin() {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-gray-200">
-        <button className="flex items-center gap-3 text-red-600 hover:text-red-800 transition-colors cursor-pointer">
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="flex items-center gap-3 text-red-600 hover:text-red-800 transition-colors cursor-pointer"
+        >
           <FaSignOutAlt /> <span className="text-sm font-semibold">Logout</span>
         </button>
       </div>

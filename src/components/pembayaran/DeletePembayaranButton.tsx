@@ -39,8 +39,12 @@ export default function DeletePembayaranButton({
 
       toast.success("Data pembayaran berhasil dihapus");
       router.refresh();
-    } catch (err: any) {
-      toast.error(err.message || "Terjadi kesalahan");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Terjadi kesalahan");
+      }
     } finally {
       setLoading(false);
     }

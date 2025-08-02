@@ -28,8 +28,8 @@ export async function getPegawaiStats() {
 // Statistik Pembayaran
 export async function getPembayaranStats() {
   const result = await prisma.pembayaran.aggregate({
-    _sum: { jumlah: true },
+    _sum: { jumlahBayar: true },
   });
 
-  return { totalPembayaran: result._sum.jumlah || 0 };
+  return { totalPembayaran: result._sum.jumlahBayar || 0 };
 }

@@ -1,3 +1,4 @@
+//src/app/siswa/[nisn]/dashboard/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";

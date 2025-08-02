@@ -9,6 +9,7 @@ import {
   SiswaUpdateSchema,
   SiswaCreateValues,
   SiswaUpdateValues,
+  KelasEnum,
 } from "@/types/siswa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { KelasEnum } from "@/types/siswa";
 
 type Props = {
   defaultValues?: Partial<SiswaUpdateValues>;
@@ -33,7 +33,7 @@ type Props = {
 export function SiswaForm({ defaultValues, mode = "create" }: Props) {
   const router = useRouter();
 
-  // **Gunakan schema & type sesuai mode**
+  // Pilih schema & type sesuai mode
   const schema = mode === "edit" ? SiswaUpdateSchema : SiswaCreateSchema;
   type FormValues = typeof schema extends typeof SiswaUpdateSchema
     ? SiswaUpdateValues
@@ -42,9 +42,9 @@ export function SiswaForm({ defaultValues, mode = "create" }: Props) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...defaultValues,
       penghasilanWali: defaultValues?.penghasilanWali ?? 0,
-    } as any,
+      ...defaultValues,
+    } as FormValues,
   });
 
   const {

@@ -8,42 +8,58 @@ import { PembayaranFormValues } from "@/types/pembayaran";
 
 type SiswaOption = { id: string; nama: string };
 
-type EditPembayaranPageProps = {
-  siswaList: SiswaOption[];
-};
-
-export default function EditPembayaranPage({
-  siswaList,
-}: EditPembayaranPageProps) {
+export default function EditPembayaranPage() {
   const router = useRouter();
   const { id } = useParams();
   const [defaultValues, setDefaultValues] =
     useState<PembayaranFormValues | null>(null);
+  const [siswaList, setSiswaList] = useState<SiswaOption[]>([]);
 
   useEffect(() => {
-    fetch(`/api/pembayaran/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => setDefaultValues(data))
-      .catch(() => toast.error("Gagal memuat data"));
+    async function fetchData() {
+      try {
+        const [pembayaranRes, siswaRes] = await Promise.all([
+          fetch(`/api/pembayaran/${id}`),
+          fetch(`/api/siswa/options`), // pastikan ada API untuk opsi siswa
+        ]);
+
+        if (!pembayaranRes.ok) throw new Error("Gagal memuat pembayaran");
+        if (!siswaRes.ok) throw new Error("Gagal memuat siswa");
+
+        const pembayaranData = await pembayaranRes.json();
+        const siswaOptions = await siswaRes.json();
+
+        setDefaultValues(pembayaranData);
+        setSiswaList(siswaOptions);
+      } catch (err) {
+        console.error(err);
+        toast.error("Gagal memuat data");
+      }
+    }
+
+    fetchData();
   }, [id]);
 
   async function handleSubmit(data: PembayaranFormValues): Promise<void> {
-    const res = await fetch(`/api/pembayaran/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
+    try {
+      const res = await fetch(`/api/pembayaran/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    if (!res.ok) {
-      toast.error("Gagal memperbarui pembayaran");
-      return;
+      if (!res.ok) {
+        toast.error("Gagal memperbarui pembayaran");
+        return;
+      }
+
+      toast.success("Pembayaran berhasil diperbarui");
+      router.push("/admin/pembayaran");
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      toast.error("Terjadi kesalahan");
     }
-
-    toast.success("Pembayaran berhasil diperbarui");
-    router.push("/admin/pembayaran");
-    router.refresh();
   }
 
   if (!defaultValues) return <p>Loading...</p>;

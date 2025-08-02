@@ -2,27 +2,28 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcryptjs from "bcryptjs";
 
+// GET Siswa by ID
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: { id: string } }
 ) {
   const siswa = await prisma.siswa.findUnique({ where: { id: params.id } });
-  if (!siswa)
+  if (!siswa) {
     return NextResponse.json(
       { error: "Siswa tidak ditemukan" },
       { status: 404 }
     );
+  }
   return NextResponse.json(siswa);
 }
 
+// PATCH Siswa by ID
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const data = await req.json();
-
-    // Convert tanggalLahir to Date
     const tanggalLahir = data.tanggalLahir ? new Date(data.tanggalLahir) : null;
 
     const siswa = await prisma.siswa.update({
@@ -30,7 +31,6 @@ export async function PATCH(
       data: {
         ...data,
         tanggalLahir,
-        // Jika password tidak dikirim, jangan diubah
         ...(data.password
           ? { password: await bcryptjs.hash(data.password, 10) }
           : {}),
@@ -44,14 +44,15 @@ export async function PATCH(
   }
 }
 
+// DELETE Siswa by ID
 export async function DELETE(
-  req: Request,
+  _req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     await prisma.siswa.delete({ where: { id: params.id } });
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal hapus siswa" }, { status: 500 });
   }
 }

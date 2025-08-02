@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+// File: sekolahku-app/src/app/api/tagihan/route.ts
 import prisma from "@/lib/prisma";
 
 export async function GET() {

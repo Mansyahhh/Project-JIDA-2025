@@ -41,8 +41,6 @@ export function TagihanForm({
     defaultValues: defaultValues as TagihanFormValues,
   });
 
-  const jumlahValue = form.watch("jumlah");
-
   const {
     register,
     handleSubmit,

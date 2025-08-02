@@ -63,7 +63,7 @@ export default function Navbar() {
                   className="block px-4 py-2 hover:bg-blue-50"
                   onClick={() => setIsOpen(false)}
                 >
-                  Login Siswa
+                  Login Super Admin
                 </Link>
               </motion.div>
             )}
