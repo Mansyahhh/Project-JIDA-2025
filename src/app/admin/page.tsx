@@ -1,4 +1,3 @@
-// src/app/admin/page.tsx
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatRupiah } from "@/lib/utils";
 import { getBaseUrl } from "@/lib/getBaseUrl";
@@ -12,74 +11,72 @@ type DashboardData = {
   totalSiswaPerempuan: number;
 };
 
-async function getDashboardData() {
-  const res = await fetch(`${getBaseUrl()}/api/dashboard`, {
-    cache: "no-store",
-  });
+async function getDashboardData(): Promise<DashboardData> {
+  const url = `${getBaseUrl()}/api/dashboard`;
+
+  // Log URL yang digunakan untuk fetch
+  console.log("Fetching dashboard data from:", url);
+
+  const res = await fetch(url, { cache: "no-store" });
+
+  // Kalau gagal → log isi HTML/teks agar mudah debugging
+  if (!res.ok) {
+    console.error(
+      "Dashboard API response not OK:",
+      res.status,
+      await res.text()
+    );
+    throw new Error("Failed to fetch dashboard data");
+  }
+
   return res.json();
 }
 
-export default async function AdminDashboardPage() {
-  const data: DashboardData = await getDashboardData();
+export default async function AdminPage() {
+  const data = await getDashboardData();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="p-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader>
           <CardTitle>Total Siswa</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">{data.totalSiswa}</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Siswa Laki-laki</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">{data.totalSiswaLaki}</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Siswa Perempuan</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">{data.totalSiswaPerempuan}</p>
-        </CardContent>
+        <CardContent>{data.totalSiswa}</CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>Total Guru</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold">{data.totalGuru}</p>
-        </CardContent>
+        <CardContent>{data.totalGuru}</CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>Total Tagihan</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold text-red-600">
-            {formatRupiah(data.totalTagihan)}
-          </p>
-        </CardContent>
+        <CardContent>{formatRupiah(data.totalTagihan)}</CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle>Total Pembayaran</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-2xl font-bold text-indigo-600">
-            {formatRupiah(data.totalPembayaran)}
-          </p>
-        </CardContent>
+        <CardContent>{formatRupiah(data.totalPembayaran)}</CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Siswa Laki-laki</CardTitle>
+        </CardHeader>
+        <CardContent>{data.totalSiswaLaki}</CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Siswa Perempuan</CardTitle>
+        </CardHeader>
+        <CardContent>{data.totalSiswaPerempuan}</CardContent>
       </Card>
     </div>
   );

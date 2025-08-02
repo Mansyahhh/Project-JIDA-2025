@@ -37,6 +37,10 @@ pnpm prisma migrate dev
 pnpm run dev
 ```
 
+## Link Vercel
+
+https://project-jida-2025.vercel.app/
+
 ## Role dan User Untuk Login
 
 1.  superadmin
