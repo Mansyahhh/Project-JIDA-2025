@@ -1,3 +1,7 @@
+// src/app/admin/page.tsx
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { formatRupiah } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +15,9 @@ import {
 } from "lucide-react";
 
 export default async function AdminPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/login");
+
   const totalSiswa = await prisma.siswa.count();
   const totalGuru = await prisma.guru.count();
   const totalTagihan = await prisma.tagihan.aggregate({
