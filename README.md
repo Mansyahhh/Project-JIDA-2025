@@ -22,17 +22,27 @@ Aplikasi CRUD sederhana berbasis Next.js yang digunakan untuk mengelola data sis
 ## 📦 Cara Menjalankan Project
 
 ```bash
-git clone https://github.com/namamu/sekolahku.git
-cd sekolahku
+git clone https://github.com/Mansyahhh/Project-JIDA-2025.git
+cd ke clone
 
-npm install
+pnpm install
 
 # Tambahkan file .env
 cp .env.example .env
 
 # Jalankan Prisma migration
-npx prisma migrate dev
+pnpm prisma migrate dev
 
 # Jalankan aplikasi
-npm run dev
+pnpm run dev
 ```
+
+## Role dan User Untuk Login
+
+1.  superadmin
+    Email : superadmin@sekolahku.com
+    Pass : superadmin123
+
+2.  Admin biasa
+    Email : admin@sekolahku.com
+    Pass : admin123
