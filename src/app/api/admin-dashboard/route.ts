@@ -1,3 +1,4 @@
+// /src/app/api/admin-dashboard/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { formatRupiah } from "@/lib/utils";
@@ -21,25 +22,25 @@ export async function GET() {
   const cards = [
     {
       title: "Jumlah Siswa",
-      value: totalSiswa,
+      value: totalSiswa ?? 0,
       icon: "Users",
       color: "bg-blue-100 text-blue-600",
     },
     {
       title: "Siswa Laki-laki",
-      value: totalSiswaLaki,
+      value: totalSiswaLaki ?? 0,
       icon: "User",
       color: "bg-cyan-100 text-cyan-600",
     },
     {
       title: "Siswa Perempuan",
-      value: totalSiswaPerempuan,
+      value: totalSiswaPerempuan ?? 0,
       icon: "UserRound",
       color: "bg-pink-100 text-pink-600",
     },
     {
       title: "Total Guru",
-      value: totalGuru,
+      value: totalGuru ?? 0,
       icon: "UserCheck",
       color: "bg-green-100 text-green-600",
     },
