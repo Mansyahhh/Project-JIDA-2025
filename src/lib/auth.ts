@@ -5,6 +5,14 @@ import { compare } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+// Tipe user sesuai Prisma, tanpa field password & createdAt
+type AppUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -13,12 +21,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<{
-        id: string;
-        name: string;
-        email: string;
-        role: string;
-      } | null> {
+      async authorize(credentials): Promise<AppUser | null> {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
@@ -41,18 +44,17 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as any).id;
-        token.role = (user as any).role;
+        const u = user as AppUser;
+        token.id = u.id;
+        token.role = u.role;
       }
-      console.log("JWT CALLBACK", token);
       return token;
     },
     async session({ session, token }) {
-      if (token) {
+      if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
-      console.log("SESSION CALLBACK", session);
       return session;
     },
   },

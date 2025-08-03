@@ -79,7 +79,8 @@ export default async function AdminPage() {
       {cards.map((card) => (
         <Card
           key={card.title}
-          className="shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100"
+          className="shadow-md hover:shadow-xl transition-all duration-300 
+             border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-semibold">
@@ -89,9 +90,8 @@ export default async function AdminPage() {
           </CardHeader>
           <CardContent>
             <div
-              className={`text-4xl font-bold ${
-                card.valueColor ?? "text-gray-800"
-              }`}
+              className={`text-4xl font-bold transition-colors duration-300 
+              ${card.valueColor ?? "text-gray-800"}`}
             >
               {card.value}
             </div>

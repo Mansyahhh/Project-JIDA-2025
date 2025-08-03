@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
+
 export default function AdminLoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,17 +20,18 @@ export default function AdminLoginForm() {
     setLoading(true);
 
     const result = await signIn("credentials", {
-      redirect: true, // ✅ NextAuth handle redirect
+      redirect: false,
       email: username,
       password: password,
-      callbackUrl: "/admin", // ✅ langsung ke dashboard
     });
 
     if (result?.error) {
       toast.error("Username atau password salah");
       setLoading(false);
+    } else {
+      toast.success("Berhasil login!");
+      window.location.href = "/admin"; // ⬅ reload + cookie sudah siap
     }
-    // tidak perlu router.push() manual
   }
 
   return (
