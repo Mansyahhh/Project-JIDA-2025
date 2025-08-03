@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
-
 export default function AdminLoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

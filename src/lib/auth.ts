@@ -13,9 +13,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(
-        credentials
-      ): Promise<{
+      async authorize(credentials): Promise<{
         id: string;
         name: string;
         email: string;
@@ -41,19 +39,21 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = (user as any).id;
+        token.role = (user as any).role;
+      }
+      console.log("JWT CALLBACK", token);
+      return token;
+    },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
+      console.log("SESSION CALLBACK", session);
       return session;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
-      return token;
     },
   },
   session: { strategy: "jwt" },
