@@ -35,13 +35,25 @@ export default async function AdminPage() {
 
   const cards = [
     {
-      title: "Total Siswa",
+      title: "Jumlah Siswa",
       value: totalSiswa,
       icon: Users,
       color: "bg-blue-100 text-blue-600",
     },
     {
-      title: "Total Guru",
+      title: "Siswa Laki-laki",
+      value: totalSiswaLaki,
+      icon: User,
+      color: "bg-cyan-100 text-cyan-600",
+    },
+    {
+      title: "Siswa Perempuan",
+      value: totalSiswaPerempuan,
+      icon: UserRound,
+      color: "bg-pink-100 text-pink-600",
+    },
+    {
+      title: "Jumlah Guru",
       value: totalGuru,
       icon: UserCheck,
       color: "bg-green-100 text-green-600",
@@ -59,18 +71,6 @@ export default async function AdminPage() {
       icon: CreditCard,
       color: "bg-purple-100 text-purple-600",
       valueColor: "text-purple-600",
-    },
-    {
-      title: "Siswa Laki-laki",
-      value: totalSiswaLaki,
-      icon: User,
-      color: "bg-cyan-100 text-cyan-600",
-    },
-    {
-      title: "Siswa Perempuan",
-      value: totalSiswaPerempuan,
-      icon: UserRound,
-      color: "bg-pink-100 text-pink-600",
     },
   ];
 
