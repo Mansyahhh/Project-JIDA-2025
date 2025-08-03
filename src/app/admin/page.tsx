@@ -4,28 +4,19 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Users,
-  User,
-  User2,
-  UserCheck,
-  DollarSign,
-  CreditCard,
-} from "lucide-react";
 
-const iconMap: Record<string, any> = {
-  Users,
-  User,
-  User2,
-  UserCheck,
-  DollarSign,
-  CreditCard,
+type DashboardCard = {
+  title: string;
+  value: string | number;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  color: string;
+  valueColor?: string;
 };
 
 export default function AdminPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession(); // session dihapus karena tidak dipakai
   const router = useRouter();
-  const [cards, setCards] = useState<any[]>([]);
+  const [cards, setCards] = useState<DashboardCard[]>([]);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -41,43 +32,30 @@ export default function AdminPage() {
     return <div className="p-6 text-center text-lg">Memeriksa sesi...</div>;
   }
 
-  if (!cards.length) {
-    return (
-      <div className="p-6 text-center text-gray-500">
-        Memuat data dashboard...
-      </div>
-    );
-  }
-
   return (
     <div className="p-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {cards.map((card) => {
-        const IconComponent = iconMap[card.icon] ?? Users;
-        return (
-          <Card
-            key={card.title}
-            className="shadow-md hover:shadow-xl transition-all duration-300 
-               border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-base font-semibold">
-                {card.title}
-              </CardTitle>
-              <IconComponent
-                className={`h-10 w-10 p-2 rounded-full ${card.color}`}
-              />
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-4xl font-bold transition-colors duration-300 
-                  ${card.valueColor ?? "text-gray-800"}`}
-              >
-                {card.value}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {cards.map((card) => (
+        <Card
+          key={card.title}
+          className="shadow-md hover:shadow-xl transition-all duration-300 
+             border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-base font-semibold">
+              {card.title}
+            </CardTitle>
+            <card.Icon className={`h-10 w-10 p-2 rounded-full ${card.color}`} />
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`text-4xl font-bold transition-colors duration-300 
+                ${card.valueColor ?? "text-gray-800"}`}
+            >
+              {card.value}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }
