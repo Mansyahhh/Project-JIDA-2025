@@ -1,106 +1,83 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { formatRupiah } from "@/lib/utils";
-import { prisma } from "@/lib/prisma";
 import {
   Users,
+  User,
+  User2,
   UserCheck,
   DollarSign,
   CreditCard,
-  User,
-  UserRound,
 } from "lucide-react";
 
-export const runtime = "nodejs"; // ✅ memastikan session bisa dibaca di server (Vercel)
+const iconMap: Record<string, any> = {
+  Users,
+  User,
+  User2,
+  UserCheck,
+  DollarSign,
+  CreditCard,
+};
 
-export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
-  console.log("SESSION DARI SERVER:", session); // ✅ cek apakah session kosong di server
+export default function AdminPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [cards, setCards] = useState<any[]>([]);
 
-  if (!session) redirect("/login");
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+    if (status === "authenticated") {
+      fetch("/api/admin-dashboard")
+        .then((res) => res.json())
+        .then((data) => setCards(data.cards))
+        .catch(console.error);
+    }
+  }, [status, router]);
 
-  const jumlahSiswa = await prisma.siswa.count();
-  const jumlahGuru = await prisma.guru.count();
-  const totalTagihan = await prisma.tagihan.aggregate({
-    _sum: { jumlah: true },
-  });
-  const totalPembayaran = await prisma.pembayaran.aggregate({
-    _sum: { jumlahBayar: true },
-  });
-  const siswaLaki = await prisma.siswa.count({
-    where: { jenisKelamin: "Laki_laki" },
-  });
-  const siswaPerempuan = await prisma.siswa.count({
-    where: { jenisKelamin: "Perempuan" },
-  });
+  if (status === "loading") {
+    return <div className="p-6 text-center text-lg">Memeriksa sesi...</div>;
+  }
 
-  const cards = [
-    {
-      title: "Jumlah Siswa",
-      value: jumlahSiswa,
-      icon: Users,
-      color: "bg-blue-100 text-blue-600",
-    },
-    {
-      title: "Siswa Laki-laki",
-      value: siswaLaki,
-      icon: User,
-      color: "bg-cyan-100 text-cyan-600",
-    },
-    {
-      title: "Siswa Perempuan",
-      value: siswaPerempuan,
-      icon: UserRound,
-      color: "bg-pink-100 text-pink-600",
-    },
-    {
-      title: "Jumlah Guru",
-      value: jumlahGuru,
-      icon: UserCheck,
-      color: "bg-green-100 text-green-600",
-    },
-    {
-      title: "Total Tagihan",
-      value: formatRupiah(totalTagihan._sum.jumlah ?? 0),
-      icon: DollarSign,
-      color: "bg-yellow-100 text-yellow-600",
-      valueColor: "text-yellow-600",
-    },
-    {
-      title: "Total Pembayaran",
-      value: formatRupiah(totalPembayaran._sum.jumlahBayar ?? 0),
-      icon: CreditCard,
-      color: "bg-purple-100 text-purple-600",
-      valueColor: "text-purple-600",
-    },
-  ];
+  if (!cards.length) {
+    return (
+      <div className="p-6 text-center text-gray-500">
+        Memuat data dashboard...
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {cards.map((card) => (
-        <Card
-          key={card.title}
-          className="shadow-md hover:shadow-xl transition-all duration-300 
-             border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-base font-semibold">
-              {card.title}
-            </CardTitle>
-            <card.icon className={`h-10 w-10 p-2 rounded-full ${card.color}`} />
-          </CardHeader>
-          <CardContent>
-            <div
-              className={`text-4xl font-bold transition-colors duration-300 
-              ${card.valueColor ?? "text-gray-800"}`}
-            >
-              {card.value}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {cards.map((card) => {
+        const IconComponent = iconMap[card.icon] ?? Users;
+        return (
+          <Card
+            key={card.title}
+            className="shadow-md hover:shadow-xl transition-all duration-300 
+               border border-gray-100 rounded-2xl bg-white/80 backdrop-blur"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-base font-semibold">
+                {card.title}
+              </CardTitle>
+              <IconComponent
+                className={`h-10 w-10 p-2 rounded-full ${card.color}`}
+              />
+            </CardHeader>
+            <CardContent>
+              <div
+                className={`text-4xl font-bold transition-colors duration-300 
+                  ${card.valueColor ?? "text-gray-800"}`}
+              >
+                {card.value}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

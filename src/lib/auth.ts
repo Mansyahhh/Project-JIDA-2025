@@ -1,17 +1,9 @@
-import { type NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import { compare } from "bcryptjs";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { type NextAuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
-
-// Tipe user sesuai Prisma, tanpa field password & createdAt
-type AppUser = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,12 +13,13 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<AppUser | null> {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
+
         if (!user) return null;
 
         const isValid = await compare(credentials.password, user.password);
@@ -44,14 +37,13 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as AppUser;
-        token.id = u.id;
-        token.role = u.role;
+        token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
       }
