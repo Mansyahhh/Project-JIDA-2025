@@ -1,4 +1,3 @@
-// src/app/admin/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
@@ -14,47 +13,51 @@ import {
   UserRound,
 } from "lucide-react";
 
+export const runtime = "nodejs"; // ✅ memastikan session bisa dibaca di server (Vercel)
+
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
+  console.log("SESSION DARI SERVER:", session); // ✅ cek apakah session kosong di server
+
   if (!session) redirect("/login");
 
-  const totalSiswa = await prisma.siswa.count();
-  const totalGuru = await prisma.guru.count();
+  const jumlahSiswa = await prisma.siswa.count();
+  const jumlahGuru = await prisma.guru.count();
   const totalTagihan = await prisma.tagihan.aggregate({
     _sum: { jumlah: true },
   });
   const totalPembayaran = await prisma.pembayaran.aggregate({
     _sum: { jumlahBayar: true },
   });
-  const totalSiswaLaki = await prisma.siswa.count({
+  const siswaLaki = await prisma.siswa.count({
     where: { jenisKelamin: "Laki_laki" },
   });
-  const totalSiswaPerempuan = await prisma.siswa.count({
+  const siswaPerempuan = await prisma.siswa.count({
     where: { jenisKelamin: "Perempuan" },
   });
 
   const cards = [
     {
       title: "Jumlah Siswa",
-      value: totalSiswa,
+      value: jumlahSiswa,
       icon: Users,
       color: "bg-blue-100 text-blue-600",
     },
     {
       title: "Siswa Laki-laki",
-      value: totalSiswaLaki,
+      value: siswaLaki,
       icon: User,
       color: "bg-cyan-100 text-cyan-600",
     },
     {
       title: "Siswa Perempuan",
-      value: totalSiswaPerempuan,
+      value: siswaPerempuan,
       icon: UserRound,
       color: "bg-pink-100 text-pink-600",
     },
     {
       title: "Jumlah Guru",
-      value: totalGuru,
+      value: jumlahGuru,
       icon: UserCheck,
       color: "bg-green-100 text-green-600",
     },
