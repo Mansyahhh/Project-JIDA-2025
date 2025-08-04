@@ -1,3 +1,4 @@
+// src/app/api/users/[id]/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
@@ -5,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 
-// PATCH User by ID
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
@@ -37,7 +37,6 @@ export async function PATCH(
   return NextResponse.json(updatedUser);
 }
 
-// DELETE User by ID
 export async function DELETE(
   _req: Request,
   { params }: { params: { id: string } }

@@ -1,8 +1,8 @@
 // src/lib/authOptions.ts
-import { type NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
-import { compare } from "bcryptjs";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { NextAuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -20,10 +20,12 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-
         if (!user) return null;
 
-        const isValid = await compare(credentials.password, user.password);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
         if (!isValid) return null;
 
         return {
@@ -36,21 +38,25 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
-      return session;
-    },
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as { id: string }).id;
-        token.role = (user as { role: string }).role;
+        const u = user as unknown as { role?: string };
+        token.role = u.role ?? "user";
       }
       return token;
     },
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          ...session.user,
+          role: token.role as string,
+        };
+      }
+      return session;
+    },
   },
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };

@@ -1,0 +1,262 @@
+Folder PATH listing for volume Data
+Volume serial number is 137E-8D50
+D:.
+¦   .env
+¦   .env.local
+¦   .gitignore
+¦   components.json
+¦   eslint.config.mjs
+¦   middleware.ts
+¦   next-env.d.ts
+¦   next.config.ts
+¦   package.json
+¦   pnpm-lock.yaml
+¦   postcss.config.mjs
+¦   README.md
+¦   structure.txt
+¦   tsconfig.json
+¦   
++---prisma
+¦   ¦   dev.db
+¦   ¦   schema.prisma
+¦   ¦   seed.ts
+¦   ¦   
+¦   +---migrations
+¦       ¦   migration_lock.toml
+¦       ¦   
+¦       +---20250802054809_init
+¦               migration.sql
+¦               
++---public
+¦   ¦   dashboard.svg
+¦   ¦   favicon.ico
+¦   ¦   file.svg
+¦   ¦   globe.svg
+¦   ¦   logo.png
+¦   ¦   moving.svg
+¦   ¦   next.svg
+¦   ¦   not-found1.svg
+¦   ¦   not-found2.svg
+¦   ¦   sekolahku.svg
+¦   ¦   studying.svg
+¦   ¦   vercel.svg
+¦   ¦   window.svg
+¦   ¦   
+¦   +---galeri
+¦           1.svg
+¦           2.svg
+¦           3.svg
+¦           4.svg
+¦           5.svg
+¦           6.svg
+¦           
++---src
+    ¦   middleware.ts
+    ¦   
+    +---app
+    ¦   ¦   globals.css
+    ¦   ¦   layout.tsx
+    ¦   ¦   not-found.tsx
+    ¦   ¦   page.tsx
+    ¦   ¦   
+    ¦   +---admin
+    ¦   ¦   ¦   layout.tsx
+    ¦   ¦   ¦   page.tsx
+    ¦   ¦   ¦   
+    ¦   ¦   +---data-guru
+    ¦   ¦   ¦   ¦   page.tsx
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---edit
+    ¦   ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦   ¦           
+    ¦   ¦   ¦   +---tambah
+    ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦           
+    ¦   ¦   +---data-siswa
+    ¦   ¦   ¦   ¦   page.tsx
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---edit
+    ¦   ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦   ¦           
+    ¦   ¦   ¦   +---tambah
+    ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦           
+    ¦   ¦   +---pembayaran
+    ¦   ¦   ¦   ¦   page.tsx
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---edit
+    ¦   ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦   ¦           
+    ¦   ¦   ¦   +---tambah
+    ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦           
+    ¦   ¦   +---tagihan
+    ¦   ¦   ¦   ¦   page.tsx
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---edit
+    ¦   ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦   ¦           
+    ¦   ¦   ¦   +---tambah
+    ¦   ¦   ¦           page.tsx
+    ¦   ¦   ¦           
+    ¦   ¦   +---users
+    ¦   ¦           page.tsx
+    ¦   ¦           
+    ¦   +---api
+    ¦   ¦   +---admin-dashboard
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---auth
+    ¦   ¦   ¦   +---[...nextauth]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---dashboard
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---guru
+    ¦   ¦   ¦   ¦   route.ts
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---[guruId]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---pembayaran
+    ¦   ¦   ¦   ¦   route.ts
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---siswa
+    ¦   ¦   ¦   ¦   route.ts
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---tagihan
+    ¦   ¦   ¦   ¦   route.ts
+    ¦   ¦   ¦   ¦   
+    ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---users
+    ¦   ¦       ¦   route.ts
+    ¦   ¦       ¦   
+    ¦   ¦       +---[id]
+    ¦   ¦               route.ts
+    ¦   ¦               
+    ¦   +---kontak
+    ¦   ¦       page.tsx
+    ¦   ¦       
+    ¦   +---login
+    ¦   ¦       page.tsx
+    ¦   ¦       
+    ¦   +---siswa
+    ¦   ¦   ¦   not-found.tsx
+    ¦   ¦   ¦   
+    ¦   ¦   +---[nisn]
+    ¦   ¦       ¦   layout.tsx
+    ¦   ¦       ¦   page.tsx
+    ¦   ¦       ¦   
+    ¦   ¦       +---dashboard
+    ¦   ¦       ¦       page.tsx
+    ¦   ¦       ¦       
+    ¦   ¦       +---pembayaran
+    ¦   ¦       ¦       page.tsx
+    ¦   ¦       ¦       
+    ¦   ¦       +---ubah-password
+    ¦   ¦               page.tsx
+    ¦   ¦               
+    ¦   +---tentang
+    ¦           page.tsx
+    ¦           
+    +---components
+    ¦   ¦   DeleteSiswaButton.tsx
+    ¦   ¦   InputCurrency.tsx
+    ¦   ¦   KartuSiswa.tsx
+    ¦   ¦   Navbar.tsx
+    ¦   ¦   
+    ¦   +---admin
+    ¦   ¦   ¦   DashboardHeader.tsx
+    ¦   ¦   ¦   DeleteTagihanButton.tsx
+    ¦   ¦   ¦   sidebar.tsx
+    ¦   ¦   ¦   
+    ¦   ¦   +---siswa
+    ¦   ¦           SiswaForm.tsx
+    ¦   ¦           
+    ¦   +---auth
+    ¦   ¦       AdminLoginForm.tsx
+    ¦   ¦       
+    ¦   +---common
+    ¦   ¦       ConfirmDialog.tsx
+    ¦   ¦       
+    ¦   +---dashboard
+    ¦   ¦       StatCard.tsx
+    ¦   ¦       
+    ¦   +---forms
+    ¦   ¦       PembayaranForm.tsx
+    ¦   ¦       TagihanForm.tsx
+    ¦   ¦       UserForm.tsx
+    ¦   ¦       
+    ¦   +---guru
+    ¦   ¦       DeleteGuruButton.tsx
+    ¦   ¦       GuruForm.tsx
+    ¦   ¦       
+    ¦   +---landing
+    ¦   ¦       Galeri.tsx
+    ¦   ¦       Hero.tsx
+    ¦   ¦       
+    ¦   +---pembayaran
+    ¦   ¦       column.tsx
+    ¦   ¦       DeletePembayaranButton.tsx
+    ¦   ¦       PembayaranTable.tsx
+    ¦   ¦       
+    ¦   +---providers
+    ¦   ¦       NextAuthProviders.tsx
+    ¦   ¦       
+    ¦   +---siswa
+    ¦   ¦       SidebarSiswa.tsx
+    ¦   ¦       
+    ¦   +---ui
+    ¦           alert-dialog.tsx
+    ¦           button.tsx
+    ¦           card.tsx
+    ¦           data-table.tsx
+    ¦           dialog.tsx
+    ¦           form.tsx
+    ¦           input.tsx
+    ¦           label.tsx
+    ¦           radio-group.tsx
+    ¦           select.tsx
+    ¦           separator.tsx
+    ¦           skeleton.tsx
+    ¦           sonner.tsx
+    ¦           table.tsx
+    ¦           textarea.tsx
+    ¦           
+    +---data
+    ¦       akun.ts
+    ¦       pesertaDidik.ts
+    ¦       
+    +---lib
+    ¦   ¦   authOptions.ts
+    ¦   ¦   fetcher.ts
+    ¦   ¦   formatRupiah.ts
+    ¦   ¦   formatter.ts
+    ¦   ¦   prisma.ts
+    ¦   ¦   utils.ts
+    ¦   ¦   Wrapper.tsx
+    ¦   ¦   
+    ¦   +---prisma
+    ¦           dashboardStats.ts
+    ¦           
+    +---types
+            guru.ts
+            next-auth.d.ts
+            pembayaran.ts
+            siswa.ts
+            status.ts
+            tagihan.ts
+            
