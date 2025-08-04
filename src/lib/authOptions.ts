@@ -1,3 +1,4 @@
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -6,8 +7,7 @@ import { NextAuthOptions } from "next-auth";
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
-  session: { strategy: "jwt" }, // PAKAI JWT
-  secret: process.env.NEXTAUTH_SECRET,
+  adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -38,14 +38,23 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = (user as any).role || "user";
+      if (user) {
+        // user sudah punya tipe dari CredentialsProvider return
+        token.role = (user as { role?: string }).role ?? "user";
+      }
       return token;
     },
     async session({ session, token }) {
-      session.user = { ...session.user, role: token.role as string };
+      if (token && session.user) {
+        session.user.role = token.role as string;
+      }
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
