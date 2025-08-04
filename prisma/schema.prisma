@@ -77,18 +77,17 @@ enum EnumMetodePembayaran {
   LAINNYA
 }
 
-
 model Siswa {
-  id              String        @id @default(uuid())
+  id              String       @id @default(uuid())
   nama            String
   kelas           KelasEnum
-  nisn            String        @unique
+  nisn            String       @unique
   password        String
   alamat          String?
-  createdAt       DateTime      @default(now())
+  createdAt       DateTime     @default(now())
   email           String?
   phone           String?
-  updatedAt       DateTime      @updatedAt
+  updatedAt       DateTime     @updatedAt
   namaAyah        String?
   namaIbu         String?
   namaWali        String?
@@ -99,48 +98,46 @@ model Siswa {
   jenisKelamin    String?
   status          StatusSiswa
   pembayaran      Pembayaran[]
-  tagihan         Tagihan[]     @relation("SiswaTagihan") // <-- tambahkan ini
+  tagihan         Tagihan[]    @relation("SiswaTagihan") // <-- tambahkan ini
 }
 
-
 model Guru {
-  id          String   @id @default(uuid())
-  nama        String
-  jenisKelamin JenisKelamin
-  alamat     String?
-  email       String   @unique
-  phone       String?
-  tipePegawai TipePegawai
-  mapel       String?
+  id                 String       @id @default(uuid())
+  nama               String
+  jenisKelamin       JenisKelamin
+  alamat             String?
+  email              String       @unique
+  phone              String?
+  tipePegawai        TipePegawai
+  mapel              String?
   pendidikanTerakhir String
-  createdAt   DateTime @default(now())
+  createdAt          DateTime     @default(now())
 }
 
 model Tagihan {
-  id          String    @id @default(uuid())
-  nama        String
-  deskripsi   String?
-  jumlah      Int
+  id           String           @id @default(uuid())
+  nama         String
+  deskripsi    String?
+  jumlah       Int
   berlakuUntuk EnumBerlakuUntuk
-  kelas       KelasEnum?   
-  siswaId     String?
-  siswa       Siswa?     @relation("SiswaTagihan", fields: [siswaId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  pembayaran  Pembayaran[]
+  kelas        KelasEnum?
+  siswaId      String?
+  siswa        Siswa?           @relation("SiswaTagihan", fields: [siswaId], references: [id])
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  pembayaran   Pembayaran[]
 }
 
-
 model Pembayaran {
-  id          String   @id @default(uuid())
+  id          String               @id @default(uuid())
   siswaId     String
   tagihanId   String
   jumlahBayar Int
-  tanggal     DateTime @default(now())
+  tanggal     DateTime             @default(now())
   metode      EnumMetodePembayaran
   keterangan  String?
-  siswa       Siswa    @relation(fields: [siswaId], references: [id])
-  tagihan     Tagihan  @relation(fields: [tagihanId], references: [id])
+  siswa       Siswa                @relation(fields: [siswaId], references: [id])
+  tagihan     Tagihan              @relation(fields: [tagihanId], references: [id])
 }
 
 model User {
@@ -150,4 +147,33 @@ model User {
   password  String
   role      String   @default("admin") // "admin" | "superadmin"
   createdAt DateTime @default(now())
+
+  sessions Session[]
+  accounts Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
